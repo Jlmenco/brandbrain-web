@@ -7,6 +7,7 @@ import type { ContentItem } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScheduleDialog } from "./schedule-dialog";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { formatDate } from "@/lib/utils";
 import { ExternalLink } from "lucide-react";
 import { useWorkspace } from "@/contexts/workspace-context";
@@ -20,6 +21,8 @@ export function ContentWorkflowActions({ item, onStatusChange }: Props) {
   const { can } = useWorkspace();
   const [loading, setLoading] = useState(false);
   const [showSchedule, setShowSchedule] = useState(false);
+  const [showConfirmReject, setShowConfirmReject] = useState(false);
+  const [showConfirmPublish, setShowConfirmPublish] = useState(false);
   const [notes, setNotes] = useState("");
   const [error, setError] = useState("");
 
@@ -81,9 +84,7 @@ export function ContentWorkflowActions({ item, onStatusChange }: Props) {
             </Button>
             <Button
               variant="destructive"
-              onClick={() =>
-                doAction(() => api.reject(item.id, notes || undefined), "Conteudo rejeitado")
-              }
+              onClick={() => setShowConfirmReject(true)}
               disabled={loading}
             >
               Rejeitar
@@ -99,7 +100,7 @@ export function ContentWorkflowActions({ item, onStatusChange }: Props) {
           </Button>
           <Button
             variant="outline"
-            onClick={() => doAction(() => api.publishNow(item.id), "Publicacao iniciada")}
+            onClick={() => setShowConfirmPublish(true)}
             disabled={loading}
           >
             Publicar Agora
@@ -115,7 +116,7 @@ export function ContentWorkflowActions({ item, onStatusChange }: Props) {
           {can("content:publish") && (
             <Button
               variant="outline"
-              onClick={() => doAction(() => api.publishNow(item.id), "Publicacao iniciada")}
+              onClick={() => setShowConfirmPublish(true)}
               disabled={loading}
             >
               Publicar Agora
@@ -181,6 +182,34 @@ export function ContentWorkflowActions({ item, onStatusChange }: Props) {
         onSchedule={(dt) =>
           doAction(() => api.schedule(item.id, dt), "Conteudo agendado")
         }
+      />
+
+      <ConfirmDialog
+        open={showConfirmReject}
+        onClose={() => setShowConfirmReject(false)}
+        onConfirm={() => {
+          setShowConfirmReject(false);
+          doAction(() => api.reject(item.id, notes || undefined), "Conteudo rejeitado");
+        }}
+        title="Rejeitar Conteudo"
+        description="Tem certeza que deseja rejeitar este conteudo?"
+        confirmLabel="Rejeitar"
+        variant="destructive"
+        loading={loading}
+      />
+
+      <ConfirmDialog
+        open={showConfirmPublish}
+        onClose={() => setShowConfirmPublish(false)}
+        onConfirm={() => {
+          setShowConfirmPublish(false);
+          doAction(() => api.publishNow(item.id), "Publicacao iniciada");
+        }}
+        title="Publicar Conteudo"
+        description="Publicar este conteudo imediatamente?"
+        confirmLabel="Publicar Agora"
+        variant="default"
+        loading={loading}
       />
     </div>
   );

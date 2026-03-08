@@ -18,7 +18,17 @@ interface Props {
   onStatusChange: (val: string) => void;
   onProviderChange: (val: string) => void;
   onSearchChange: (val: string) => void;
+  influencers: { id: string; name: string }[];
+  influencer: string;
+  onInfluencerChange: (val: string) => void;
+  dateFrom: string;
+  dateTo: string;
+  onDateFromChange: (val: string) => void;
+  onDateToChange: (val: string) => void;
 }
+
+const inputClass =
+  "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring";
 
 export function ContentFilters({
   status,
@@ -27,6 +37,13 @@ export function ContentFilters({
   onStatusChange,
   onProviderChange,
   onSearchChange,
+  influencers,
+  influencer,
+  onInfluencerChange,
+  dateFrom,
+  dateTo,
+  onDateFromChange,
+  onDateToChange,
 }: Props) {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -79,6 +96,40 @@ export function ContentFilters({
           <SelectItem value="twitter">Twitter</SelectItem>
         </SelectContent>
       </Select>
+
+      <Select value={influencer} onValueChange={onInfluencerChange}>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Influenciador" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">Todos influenciadores</SelectItem>
+          {influencers.map((inf) => (
+            <SelectItem key={inf.id} value={inf.id}>
+              {inf.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
+      <div className="flex items-center gap-2">
+        <label className="text-sm text-muted-foreground whitespace-nowrap">De</label>
+        <input
+          type="date"
+          value={dateFrom}
+          onChange={(e) => onDateFromChange(e.target.value)}
+          className={`${inputClass} w-[150px]`}
+        />
+      </div>
+
+      <div className="flex items-center gap-2">
+        <label className="text-sm text-muted-foreground whitespace-nowrap">Ate</label>
+        <input
+          type="date"
+          value={dateTo}
+          onChange={(e) => onDateToChange(e.target.value)}
+          className={`${inputClass} w-[150px]`}
+        />
+      </div>
     </div>
   );
 }

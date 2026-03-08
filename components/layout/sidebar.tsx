@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FileText, Users, Megaphone, UserPlus, ClipboardList } from "lucide-react";
+import { LayoutDashboard, FileText, Users, Megaphone, UserPlus, ClipboardList, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   { href: "/campanhas", label: "Campanhas", icon: Megaphone },
   { href: "/leads", label: "Leads", icon: UserPlus },
   { href: "/historico", label: "Historico", icon: ClipboardList },
+  { href: "/configuracoes", label: "Configuracoes", icon: Settings },
 ];
 
 export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {

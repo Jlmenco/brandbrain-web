@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/auth-context";
 import { BrandSelector } from "./brand-selector";
 import { NotificationBell } from "./notification-bell";
 import { LogOut, Menu, Sun, Moon } from "lucide-react";
+import { CommandPaletteTrigger } from "@/components/ui/command-palette";
 
 function ThemeToggle() {
   const [dark, setDark] = useState(false);
@@ -54,6 +55,7 @@ export function Header({ onMenuClick }: HeaderProps) {
       </div>
 
       <div className="flex items-center gap-4">
+        <CommandPaletteTrigger />
         <ThemeToggle />
         <NotificationBell />
         <span className="text-sm text-muted-foreground hidden sm:inline">{user?.name}</span>

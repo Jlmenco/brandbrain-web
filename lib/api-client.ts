@@ -111,6 +111,9 @@ export const api = {
     cc_id?: string;
     status?: string;
     provider?: string;
+    influencer_id?: string;
+    date_from?: string;
+    date_to?: string;
     search?: string;
     skip?: number;
     limit?: number;

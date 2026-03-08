@@ -12,10 +12,11 @@ import { Gate } from "@/components/ui/gate";
 import { Button } from "@/components/ui/button";
 import { CreateLeadDialog } from "@/components/lead/create-lead-dialog";
 import { EditLeadDialog } from "@/components/lead/edit-lead-dialog";
-import { Plus, Pencil } from "lucide-react";
+import { Plus, Pencil, Download } from "lucide-react";
 import type { Lead } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
+import { exportToCSV } from "@/lib/export";
 
 export default function LeadsPage() {
   const { selectedCostCenter, loading: wsLoading } = useWorkspace();
@@ -74,6 +75,28 @@ export default function LeadsPage() {
           <option value="won">Ganho</option>
           <option value="lost">Perdido</option>
         </select>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() =>
+            exportToCSV(
+              leads as unknown as Record<string, unknown>[],
+              "leads.csv",
+              [
+                { key: "name", label: "Nome" },
+                { key: "email", label: "Email" },
+                { key: "phone", label: "Telefone" },
+                { key: "source", label: "Fonte" },
+                { key: "score", label: "Score" },
+                { key: "status", label: "Status" },
+              ]
+            )
+          }
+          disabled={leads.length === 0}
+        >
+          <Download className="h-4 w-4 mr-2" />
+          Exportar CSV
+        </Button>
       </div>
 
       {loading ? (
@@ -89,8 +112,8 @@ export default function LeadsPage() {
           description="Seus leads aparecerao aqui conforme forem capturados."
         />
       ) : (
-        <div className="border rounded-lg overflow-hidden">
-          <table className="w-full text-sm">
+        <div className="border rounded-lg overflow-x-auto">
+          <table className="w-full min-w-[700px] text-sm">
             <thead>
               <tr className="bg-muted/50 text-left">
                 <th className="px-4 py-3 font-medium">Nome</th>

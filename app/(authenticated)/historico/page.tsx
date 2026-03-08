@@ -122,6 +122,7 @@ export default function HistoricoPage() {
           description="As acoes realizadas serao registradas aqui."
         />
       ) : (
+        <div className="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -174,6 +175,7 @@ export default function HistoricoPage() {
             ))}
           </TableBody>
         </Table>
+        </div>
       )}
 
       {total > PAGE_SIZE && (

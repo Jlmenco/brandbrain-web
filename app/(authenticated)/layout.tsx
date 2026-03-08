@@ -5,6 +5,7 @@ import { WorkspaceProvider } from "@/contexts/workspace-context";
 import { Sidebar, SidebarContent } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { CommandPalette } from "@/components/ui/command-palette";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -60,6 +61,7 @@ export default function AuthenticatedLayout({
 
         <div className="flex-1 flex flex-col min-w-0">
           <Header onMenuClick={() => setMobileOpen(true)} />
+          <CommandPalette />
           <main className="flex-1 p-4 lg:p-6">{children}</main>
         </div>
 

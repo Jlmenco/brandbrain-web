@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useWorkspace } from "@/contexts/workspace-context";
 import { MetricsCards } from "@/components/dashboard/metrics-cards";
 import { MetricsChart } from "@/components/dashboard/metrics-chart";
@@ -10,9 +11,34 @@ import { RecentActivity } from "@/components/dashboard/recent-activity";
 import { RecentContent } from "@/components/dashboard/recent-content";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { OnboardingWizard } from "@/components/onboarding/onboarding-wizard";
 
 export default function DashboardPage() {
   const { selectedOrg, selectedCostCenter, loading } = useWorkspace();
+
+  // Onboarding: show wizard if user hasn't completed it
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [onboardingChecked, setOnboardingChecked] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const done = localStorage.getItem("bb_onboarding_done");
+      setShowOnboarding(!done);
+      setOnboardingChecked(true);
+    }
+  }, []);
+
+  if (!onboardingChecked) {
+    return null;
+  }
+
+  if (showOnboarding) {
+    return (
+      <OnboardingWizard
+        onComplete={() => setShowOnboarding(false)}
+      />
+    );
+  }
 
   if (loading) {
     return (

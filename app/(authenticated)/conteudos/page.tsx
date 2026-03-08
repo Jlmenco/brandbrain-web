@@ -10,6 +10,8 @@ import { CreateContentDialog } from "@/components/content/create-content-dialog"
 import { Button } from "@/components/ui/button";
 import { Gate } from "@/components/ui/gate";
 import { Skeleton } from "@/components/ui/skeleton";
+import { exportToCSV } from "@/lib/export";
+import { Download } from "lucide-react";
 
 const PAGE_SIZE = 20;
 
@@ -20,6 +22,9 @@ export default function ConteudosPage() {
   const [influencers, setInfluencers] = useState<Influencer[]>([]);
   const [status, setStatus] = useState("all");
   const [provider, setProvider] = useState("all");
+  const [influencer, setInfluencer] = useState("all");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -39,6 +44,9 @@ export default function ConteudosPage() {
         cc_id: selectedCostCenter.id,
         status: status === "all" ? undefined : status,
         provider: provider === "all" ? undefined : provider,
+        influencer_id: influencer === "all" ? undefined : influencer,
+        date_from: dateFrom || undefined,
+        date_to: dateTo || undefined,
         search: search || undefined,
         skip: page * PAGE_SIZE,
         limit: PAGE_SIZE,
@@ -49,12 +57,12 @@ export default function ConteudosPage() {
       })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [selectedCostCenter, status, provider, search, page, refreshKey]);
+  }, [selectedCostCenter, status, provider, influencer, dateFrom, dateTo, search, page, refreshKey]);
 
   // Reset page when filters change
   useEffect(() => {
     setPage(0);
-  }, [status, provider, search]);
+  }, [status, provider, influencer, dateFrom, dateTo, search]);
 
   if (wsLoading) {
     return (
@@ -90,9 +98,30 @@ export default function ConteudosPage() {
             {selectedCostCenter.name} — {total} itens
           </p>
         </div>
-        <Gate permission="content:create">
-          <Button onClick={() => setShowCreate(true)}>Novo Conteudo</Button>
-        </Gate>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              exportToCSV(
+                items as unknown as Record<string, unknown>[],
+                "conteudos",
+                [
+                  { key: "provider_target", label: "Canal" },
+                  { key: "text", label: "Texto" },
+                  { key: "status", label: "Status" },
+                  { key: "scheduled_at", label: "Agendado" },
+                ]
+              )
+            }
+          >
+            <Download className="h-4 w-4 mr-1" />
+            Exportar CSV
+          </Button>
+          <Gate permission="content:create">
+            <Button onClick={() => setShowCreate(true)}>Novo Conteudo</Button>
+          </Gate>
+        </div>
       </div>
 
       <Gate permission="content:create">
@@ -112,6 +141,13 @@ export default function ConteudosPage() {
         onStatusChange={setStatus}
         onProviderChange={setProvider}
         onSearchChange={setSearch}
+        influencers={influencers.map((inf) => ({ id: inf.id, name: inf.name }))}
+        influencer={influencer}
+        onInfluencerChange={setInfluencer}
+        dateFrom={dateFrom}
+        dateTo={dateTo}
+        onDateFromChange={setDateFrom}
+        onDateToChange={setDateTo}
       />
 
       {loading ? (

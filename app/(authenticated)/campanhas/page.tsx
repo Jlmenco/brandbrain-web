@@ -8,10 +8,11 @@ import { Gate } from "@/components/ui/gate";
 import { Button } from "@/components/ui/button";
 import { CreateCampaignDialog } from "@/components/campaign/create-campaign-dialog";
 import { EditCampaignDialog } from "@/components/campaign/edit-campaign-dialog";
-import { Plus, Pencil } from "lucide-react";
+import { Plus, Pencil, Download } from "lucide-react";
 import type { Campaign } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
+import { exportToCSV } from "@/lib/export";
 
 export default function CampanhasPage() {
   const { selectedCostCenter, loading: wsLoading } = useWorkspace();
@@ -73,6 +74,26 @@ export default function CampanhasPage() {
           <option value="awareness">Reconhecimento</option>
           <option value="traffic">Trafego</option>
         </select>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() =>
+            exportToCSV(
+              filtered as unknown as Record<string, unknown>[],
+              "campanhas.csv",
+              [
+                { key: "name", label: "Nome" },
+                { key: "objective", label: "Objetivo" },
+                { key: "start_date", label: "Inicio" },
+                { key: "end_date", label: "Fim" },
+              ]
+            )
+          }
+          disabled={filtered.length === 0}
+        >
+          <Download className="h-4 w-4 mr-2" />
+          Exportar CSV
+        </Button>
       </div>
 
       {loading ? (
@@ -88,8 +109,8 @@ export default function CampanhasPage() {
           description="Crie sua primeira campanha para organizar seus conteudos."
         />
       ) : (
-        <div className="border rounded-lg overflow-hidden">
-          <table className="w-full text-sm">
+        <div className="border rounded-lg overflow-x-auto">
+          <table className="w-full min-w-[600px] text-sm">
             <thead>
               <tr className="bg-muted/50 text-left">
                 <th className="px-4 py-3 font-medium">Nome</th>
