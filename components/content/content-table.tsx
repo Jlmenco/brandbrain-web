@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import type { ContentItem, Influencer } from "@/lib/types";
 import { STATUS_LABELS, STATUS_COLORS, PROVIDER_LABELS } from "@/lib/constants";
+import { EmptyState } from "@/components/ui/empty-state";
 import { truncate, formatDate } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -19,9 +20,11 @@ export function ContentTable({ items, influencers = [] }: { items: ContentItem[]
 
   if (items.length === 0) {
     return (
-      <p className="text-sm text-muted-foreground py-8 text-center">
-        Nenhum conteudo encontrado.
-      </p>
+      <EmptyState
+        icon="📝"
+        title="Nenhum conteudo encontrado"
+        description="Crie seu primeiro conteudo para comecar."
+      />
     );
   }
 

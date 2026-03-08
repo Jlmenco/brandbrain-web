@@ -15,6 +15,7 @@ import { EditLeadDialog } from "@/components/lead/edit-lead-dialog";
 import { Plus, Pencil } from "lucide-react";
 import type { Lead } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export default function LeadsPage() {
   const { selectedCostCenter, loading: wsLoading } = useWorkspace();
@@ -82,9 +83,11 @@ export default function LeadsPage() {
           ))}
         </div>
       ) : leads.length === 0 ? (
-        <p className="text-sm text-muted-foreground">
-          Nenhum lead encontrado.
-        </p>
+        <EmptyState
+          icon="🎯"
+          title="Nenhum lead encontrado"
+          description="Seus leads aparecerao aqui conforme forem capturados."
+        />
       ) : (
         <div className="border rounded-lg overflow-hidden">
           <table className="w-full text-sm">

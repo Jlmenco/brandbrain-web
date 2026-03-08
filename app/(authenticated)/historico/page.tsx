@@ -9,6 +9,7 @@ import { ACTION_LABELS, TARGET_TYPE_LABELS } from "@/lib/constants";
 import { formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
 import {
   Select,
   SelectContent,
@@ -115,9 +116,11 @@ export default function HistoricoPage() {
           ))}
         </div>
       ) : items.length === 0 ? (
-        <p className="text-sm text-muted-foreground py-8 text-center">
-          Nenhuma acao encontrada.
-        </p>
+        <EmptyState
+          icon="📋"
+          title="Nenhuma acao encontrada"
+          description="As acoes realizadas serao registradas aqui."
+        />
       ) : (
         <Table>
           <TableHeader>

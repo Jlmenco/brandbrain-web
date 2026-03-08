@@ -9,6 +9,7 @@ import { CreateInfluencerDialog } from "@/components/influencer/create-influence
 import { Button } from "@/components/ui/button";
 import { Gate } from "@/components/ui/gate";
 import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export default function InfluenciadoresPage() {
   const { selectedOrg, loading: wsLoading } = useWorkspace();
@@ -68,11 +69,24 @@ export default function InfluenciadoresPage() {
         />
       </Gate>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {influencers.map((inf) => (
-          <InfluencerCard key={inf.id} influencer={inf} />
-        ))}
-      </div>
+      {influencers.length === 0 ? (
+        <EmptyState
+          icon="👤"
+          title="Nenhum influenciador"
+          description="Crie seu primeiro influenciador para comecar a gerar conteudo."
+          action={
+            <Gate permission="influencer:create">
+              <Button onClick={() => setShowCreate(true)}>Novo Influenciador</Button>
+            </Gate>
+          }
+        />
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {influencers.map((inf) => (
+            <InfluencerCard key={inf.id} influencer={inf} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

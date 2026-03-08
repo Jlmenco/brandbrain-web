@@ -11,6 +11,7 @@ import { EditCampaignDialog } from "@/components/campaign/edit-campaign-dialog";
 import { Plus, Pencil } from "lucide-react";
 import type { Campaign } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export default function CampanhasPage() {
   const { selectedCostCenter, loading: wsLoading } = useWorkspace();
@@ -81,9 +82,11 @@ export default function CampanhasPage() {
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <p className="text-sm text-muted-foreground">
-          Nenhuma campanha encontrada.
-        </p>
+        <EmptyState
+          icon="📢"
+          title="Nenhuma campanha encontrada"
+          description="Crie sua primeira campanha para organizar seus conteudos."
+        />
       ) : (
         <div className="border rounded-lg overflow-hidden">
           <table className="w-full text-sm">

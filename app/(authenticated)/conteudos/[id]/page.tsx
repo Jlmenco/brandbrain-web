@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Pencil } from "lucide-react";
 import { api } from "@/lib/api-client";
 import type { ContentItem } from "@/lib/types";
 import { STATUS_LABELS, STATUS_COLORS, PROVIDER_LABELS } from "@/lib/constants";
@@ -14,12 +14,16 @@ import { Separator } from "@/components/ui/separator";
 import { ContentEditor } from "@/components/content/content-editor";
 import { ContentWorkflowActions } from "@/components/content/content-workflow-actions";
 import { Skeleton } from "@/components/ui/skeleton";
+import { EditContentDialog } from "@/components/content/edit-content-dialog";
+import { Button } from "@/components/ui/button";
+import { Gate } from "@/components/ui/gate";
 
 export default function ConteudoDetailPage() {
   const params = useParams();
   const id = params.id as string;
   const [item, setItem] = useState<ContentItem | null>(null);
   const [error, setError] = useState("");
+  const [showEdit, setShowEdit] = useState(false);
 
   const fetchItem = useCallback(() => {
     api
@@ -70,6 +74,18 @@ export default function ConteudoDetailPage() {
             {PROVIDER_LABELS[item.provider_target] || item.provider_target}
           </p>
         </div>
+        {(item.status === "draft" || item.status === "review") && (
+          <Gate permission="content:edit_draft">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowEdit(true)}
+            >
+              <Pencil className="h-4 w-4 mr-1" />
+              Editar
+            </Button>
+          </Gate>
+        )}
         <Badge
           variant="outline"
           className={`text-sm ${STATUS_COLORS[item.status] || ""}`}
@@ -77,6 +93,15 @@ export default function ConteudoDetailPage() {
           {STATUS_LABELS[item.status] || item.status}
         </Badge>
       </div>
+
+      {showEdit && (
+        <EditContentDialog
+          open={showEdit}
+          onClose={() => setShowEdit(false)}
+          onUpdated={fetchItem}
+          item={item}
+        />
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
