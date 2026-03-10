@@ -1,8 +1,7 @@
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: process.env.NEXT_OUTPUT_MODE || 'standalone',
-  trailingSlash: true,
+  output: 'standalone',
   images: {
     unoptimized: true,
   },
