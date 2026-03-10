@@ -136,6 +136,7 @@ export default function ConteudoDetailPage() {
             text={item.text}
             influencerName={influencer?.name || "Influenciador"}
             influencerNiche={influencer?.niche}
+            avatarUrl={influencer ? api.getAvatarUrl(influencer.id) : undefined}
           />
         </div>
 

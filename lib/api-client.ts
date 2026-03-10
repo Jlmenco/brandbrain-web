@@ -187,6 +187,15 @@ export const api = {
       body: JSON.stringify(body),
     }),
 
+  generateAvatar: (influencerId: string) =>
+    request<{ url: string; filename: string; revised_prompt: string }>(
+      `/influencers/${influencerId}/generate-avatar`,
+      { method: "POST" }
+    ),
+
+  getAvatarUrl: (influencerId: string) =>
+    `${API_BASE}/influencers/${influencerId}/avatar`,
+
   // Campaigns
   listCampaigns: (ccId: string) =>
     request<Campaign[]>(`/campaigns${qs({ cc_id: ccId })}`),

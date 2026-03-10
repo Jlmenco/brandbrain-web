@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { BrandKitView } from "@/components/influencer/brand-kit-view";
 import { EditBrandKitDialog } from "@/components/influencer/edit-brand-kit-dialog";
+import { AvatarGenerator } from "@/components/influencer/avatar-generator";
 import { Gate } from "@/components/ui/gate";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -80,8 +81,15 @@ export default function InfluencerDetailPage() {
         </Badge>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Gate permission="brandkit:edit">
+          <AvatarGenerator
+            influencerId={influencer.id}
+            influencerName={influencer.name}
+          />
+        </Gate>
+
+        <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle className="text-base">Perfil</CardTitle>
           </CardHeader>

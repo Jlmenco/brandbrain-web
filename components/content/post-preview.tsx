@@ -8,9 +8,20 @@ interface PostPreviewProps {
   text: string;
   influencerName: string;
   influencerNiche?: string;
+  avatarUrl?: string;
 }
 
-function Avatar({ name }: { name: string }) {
+function Avatar({ name, avatarUrl }: { name: string; avatarUrl?: string }) {
+  if (avatarUrl) {
+    return (
+      <img
+        src={avatarUrl}
+        alt={name}
+        className="h-10 w-10 rounded-full object-cover shrink-0"
+      />
+    );
+  }
+
   const initials = name
     .split(" ")
     .map((w) => w[0])
@@ -25,12 +36,12 @@ function Avatar({ name }: { name: string }) {
   );
 }
 
-function LinkedInPreview({ text, influencerName, influencerNiche }: Omit<PostPreviewProps, "provider">) {
+function LinkedInPreview({ text, influencerName, influencerNiche, avatarUrl }: Omit<PostPreviewProps, "provider">) {
   return (
     <div className="bg-white dark:bg-zinc-900 rounded-lg border shadow-sm overflow-hidden">
       <div className="p-4 space-y-3">
         <div className="flex items-start gap-3">
-          <Avatar name={influencerName} />
+          <Avatar name={influencerName} avatarUrl={avatarUrl} />
           <div className="flex-1 min-w-0">
             <p className="font-semibold text-sm">{influencerName}</p>
             <p className="text-xs text-muted-foreground">{influencerNiche}</p>
@@ -58,11 +69,11 @@ function LinkedInPreview({ text, influencerName, influencerNiche }: Omit<PostPre
   );
 }
 
-function InstagramPreview({ text, influencerName }: Omit<PostPreviewProps, "provider">) {
+function InstagramPreview({ text, influencerName, avatarUrl }: Omit<PostPreviewProps, "provider">) {
   return (
     <div className="bg-white dark:bg-zinc-900 rounded-lg border shadow-sm overflow-hidden">
       <div className="p-3 flex items-center gap-3">
-        <Avatar name={influencerName} />
+        <Avatar name={influencerName} avatarUrl={avatarUrl} />
         <p className="font-semibold text-sm">{influencerName.toLowerCase().replace(/\s+/g, "")}</p>
         <MoreHorizontal className="h-5 w-5 text-muted-foreground ml-auto" />
       </div>
@@ -87,12 +98,12 @@ function InstagramPreview({ text, influencerName }: Omit<PostPreviewProps, "prov
   );
 }
 
-function FacebookPreview({ text, influencerName, influencerNiche }: Omit<PostPreviewProps, "provider">) {
+function FacebookPreview({ text, influencerName, influencerNiche, avatarUrl }: Omit<PostPreviewProps, "provider">) {
   return (
     <div className="bg-white dark:bg-zinc-900 rounded-lg border shadow-sm overflow-hidden">
       <div className="p-4 space-y-3">
         <div className="flex items-start gap-3">
-          <Avatar name={influencerName} />
+          <Avatar name={influencerName} avatarUrl={avatarUrl} />
           <div className="flex-1 min-w-0">
             <p className="font-semibold text-sm">{influencerName}</p>
             <p className="text-xs text-muted-foreground">agora</p>
@@ -116,7 +127,7 @@ function FacebookPreview({ text, influencerName, influencerNiche }: Omit<PostPre
   );
 }
 
-function TikTokPreview({ text, influencerName }: Omit<PostPreviewProps, "provider">) {
+function TikTokPreview({ text, influencerName, avatarUrl }: Omit<PostPreviewProps, "provider">) {
   return (
     <div className="bg-black text-white rounded-lg overflow-hidden" style={{ maxWidth: 280 }}>
       <div className="aspect-[9/16] bg-gradient-to-b from-zinc-800 to-zinc-900 relative flex items-end p-4">
@@ -143,7 +154,7 @@ function TikTokPreview({ text, influencerName }: Omit<PostPreviewProps, "provide
   );
 }
 
-function YouTubePreview({ text, influencerName }: Omit<PostPreviewProps, "provider">) {
+function YouTubePreview({ text, influencerName, avatarUrl }: Omit<PostPreviewProps, "provider">) {
   const title = text.split("\n")[0]?.slice(0, 100) || "Video";
   return (
     <div className="bg-white dark:bg-zinc-900 rounded-lg border shadow-sm overflow-hidden">
@@ -153,7 +164,7 @@ function YouTubePreview({ text, influencerName }: Omit<PostPreviewProps, "provid
         </div>
       </div>
       <div className="p-3 flex gap-3">
-        <Avatar name={influencerName} />
+        <Avatar name={influencerName} avatarUrl={avatarUrl} />
         <div className="space-y-1 min-w-0">
           <p className="font-semibold text-sm line-clamp-2">{title}</p>
           <p className="text-xs text-muted-foreground">{influencerName}</p>
@@ -164,7 +175,7 @@ function YouTubePreview({ text, influencerName }: Omit<PostPreviewProps, "provid
   );
 }
 
-export function PostPreview({ provider, text, influencerName, influencerNiche }: PostPreviewProps) {
+export function PostPreview({ provider, text, influencerName, influencerNiche, avatarUrl }: PostPreviewProps) {
   const PROVIDER_DISPLAY: Record<string, string> = {
     linkedin: "LinkedIn",
     instagram: "Instagram",
@@ -186,24 +197,24 @@ export function PostPreview({ provider, text, influencerName, influencerNiche }:
         </div>
 
         {provider === "linkedin" && (
-          <LinkedInPreview text={text} influencerName={influencerName} influencerNiche={influencerNiche} />
+          <LinkedInPreview text={text} influencerName={influencerName} influencerNiche={influencerNiche} avatarUrl={avatarUrl} />
         )}
         {provider === "instagram" && (
-          <InstagramPreview text={text} influencerName={influencerName} influencerNiche={influencerNiche} />
+          <InstagramPreview text={text} influencerName={influencerName} influencerNiche={influencerNiche} avatarUrl={avatarUrl} />
         )}
         {provider === "facebook" && (
-          <FacebookPreview text={text} influencerName={influencerName} influencerNiche={influencerNiche} />
+          <FacebookPreview text={text} influencerName={influencerName} influencerNiche={influencerNiche} avatarUrl={avatarUrl} />
         )}
         {provider === "tiktok" && (
-          <TikTokPreview text={text} influencerName={influencerName} influencerNiche={influencerNiche} />
+          <TikTokPreview text={text} influencerName={influencerName} influencerNiche={influencerNiche} avatarUrl={avatarUrl} />
         )}
         {provider === "youtube" && (
-          <YouTubePreview text={text} influencerName={influencerName} influencerNiche={influencerNiche} />
+          <YouTubePreview text={text} influencerName={influencerName} influencerNiche={influencerNiche} avatarUrl={avatarUrl} />
         )}
         {!["linkedin", "instagram", "facebook", "tiktok", "youtube"].includes(provider) && (
           <div className="border rounded-lg p-4 space-y-3">
             <div className="flex items-center gap-3">
-              <Avatar name={influencerName} />
+              <Avatar name={influencerName} avatarUrl={avatarUrl} />
               <div>
                 <p className="font-semibold text-sm">{influencerName}</p>
                 <p className="text-xs text-muted-foreground">agora</p>
