@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Sparkles, Loader2, RefreshCw } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
@@ -18,21 +18,16 @@ export function AvatarGenerator({ influencerId, influencerName }: AvatarGenerato
   const [checked, setChecked] = useState(false);
   const [revisedPrompt, setRevisedPrompt] = useState("");
 
-  // Verificar se avatar existe ao montar
-  const checkAvatar = () => {
-    if (checked) return;
+  useEffect(() => {
     const url = api.getAvatarUrl(influencerId);
-    const img = new Image();
+    const img = new window.Image();
     img.onload = () => {
       setAvatarUrl(url + "?t=" + Date.now());
       setChecked(true);
     };
     img.onerror = () => setChecked(true);
     img.src = url;
-  };
-
-  // Check on first render
-  if (!checked) checkAvatar();
+  }, [influencerId]);
 
   const handleGenerate = async () => {
     setLoading(true);
