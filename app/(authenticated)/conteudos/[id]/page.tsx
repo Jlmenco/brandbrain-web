@@ -13,22 +13,30 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ContentEditor } from "@/components/content/content-editor";
 import { ContentWorkflowActions } from "@/components/content/content-workflow-actions";
+import { PostPreview } from "@/components/content/post-preview";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EditContentDialog } from "@/components/content/edit-content-dialog";
 import { Button } from "@/components/ui/button";
 import { Gate } from "@/components/ui/gate";
+import type { Influencer } from "@/lib/types";
 
 export default function ConteudoDetailPage() {
   const params = useParams();
   const id = params.id as string;
   const [item, setItem] = useState<ContentItem | null>(null);
+  const [influencer, setInfluencer] = useState<Influencer | null>(null);
   const [error, setError] = useState("");
   const [showEdit, setShowEdit] = useState(false);
 
   const fetchItem = useCallback(() => {
     api
       .getContentItem(id)
-      .then(setItem)
+      .then((data) => {
+        setItem(data);
+        if (data.influencer_id) {
+          api.getInfluencer(data.influencer_id).then(setInfluencer).catch(() => {});
+        }
+      })
       .catch((err: Error) => setError(err.message));
   }, [id]);
 
@@ -122,6 +130,13 @@ export default function ConteudoDetailPage() {
               />
             </CardContent>
           </Card>
+
+          <PostPreview
+            provider={item.provider_target}
+            text={item.text}
+            influencerName={influencer?.name || "Influenciador"}
+            influencerNiche={influencer?.niche}
+          />
         </div>
 
         <div className="space-y-6">
