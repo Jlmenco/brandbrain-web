@@ -57,3 +57,8 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Fix Radix dropdown z-index — the popper wrapper needs z-index, not just the content */
+[data-radix-popper-content-wrapper] {
+  z-index: 9999 !important;
+}

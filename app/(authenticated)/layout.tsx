@@ -62,7 +62,7 @@ export default function AuthenticatedLayout({
         <div className="flex-1 flex flex-col min-w-0">
           <Header onMenuClick={() => setMobileOpen(true)} />
           <CommandPalette />
-          <main className="flex-1 p-4 lg:p-6 relative z-0">{children}</main>
+          <main className="flex-1 p-4 lg:p-6">{children}</main>
         </div>
 
         {/* Mobile sidebar */}
