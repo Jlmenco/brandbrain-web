@@ -196,6 +196,16 @@ export const api = {
   getAvatarUrl: (influencerId: string) =>
     `${API_BASE}/influencers/${influencerId}/avatar`,
 
+  // Video generation
+  generateVideo: (contentId: string) =>
+    request<{ status: string; video_url: string; filename: string }>(
+      `/content/${contentId}/generate-video`,
+      { method: "POST" }
+    ),
+
+  getVideoUrl: (contentId: string) =>
+    `${API_BASE}/content/${contentId}/video`,
+
   // Campaigns
   listCampaigns: (ccId: string) =>
     request<Campaign[]>(`/campaigns${qs({ cc_id: ccId })}`),

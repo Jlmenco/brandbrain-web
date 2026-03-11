@@ -18,6 +18,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { EditContentDialog } from "@/components/content/edit-content-dialog";
 import { Button } from "@/components/ui/button";
 import { Gate } from "@/components/ui/gate";
+import { VideoGenerator } from "@/components/content/video-generator";
 import type { Influencer } from "@/lib/types";
 
 export default function ConteudoDetailPage() {
@@ -138,6 +139,10 @@ export default function ConteudoDetailPage() {
             influencerNiche={influencer?.niche}
             avatarUrl={influencer ? api.getAvatarUrl(influencer.id) : undefined}
           />
+
+          <Gate permission="content:edit_draft">
+            <VideoGenerator item={item} onGenerated={fetchItem} />
+          </Gate>
         </div>
 
         <div className="space-y-6">
