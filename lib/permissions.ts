@@ -15,7 +15,8 @@ export type Permission =
   | "campaign:create"
   | "campaign:edit"
   | "lead:create"
-  | "lead:edit";
+  | "lead:edit"
+  | "org:manage";
 
 const ALL_PERMISSIONS: Permission[] = [
   "content:create",
@@ -33,6 +34,7 @@ const ALL_PERMISSIONS: Permission[] = [
   "campaign:edit",
   "lead:create",
   "lead:edit",
+  "org:manage",
 ];
 
 const EDITOR_PERMISSIONS: Permission[] = [

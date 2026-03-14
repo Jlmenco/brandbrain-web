@@ -21,6 +21,11 @@ import type {
   Lead,
   LeadCreate,
   LeadUpdate,
+  ElevenLabsVoice,
+  ContentTemplate,
+  ContentTemplateCreate,
+  ContentTemplateUpdate,
+  SocialAccount,
 } from "./types";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
@@ -92,6 +97,11 @@ function qs(params: Record<string, string | number | undefined>): string {
 
 export const api = {
   // Auth
+  register: (data: { name: string; email: string; password: string; org_name: string }) =>
+    request<TokenResponse>("/auth/register", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
   login: (email: string, password: string) =>
     request<TokenResponse>("/auth/login", {
       method: "POST",
@@ -101,6 +111,20 @@ export const api = {
 
   // Organizations
   listOrgs: () => request<Organization[]>("/orgs"),
+  updateOrg: (orgId: string, data: { billing_alert_threshold?: number | null; account_type?: string }) =>
+    request<Organization>(`/orgs/${orgId}`, { method: "PATCH", body: JSON.stringify(data) }),
+  activatePlan: (orgId: string, plan: string) =>
+    request<Organization>(`/orgs/${orgId}/activate`, { method: "POST", body: JSON.stringify({ plan }) }),
+  setupSolo: (orgId: string, data: { brand_name: string; niche: string }) =>
+    request<Organization>(`/orgs/${orgId}/setup-solo`, { method: "POST", body: JSON.stringify(data) }),
+  upgradeOrg: (orgId: string, targetType: string) =>
+    request<Organization>(`/orgs/${orgId}/upgrade`, { method: "POST", body: JSON.stringify({ target_type: targetType }) }),
+  createOrg: (data: { name: string; account_type: string }) =>
+    request<Organization>("/orgs", { method: "POST", body: JSON.stringify(data) }),
+  createFilial: (orgId: string, data: { name: string }) =>
+    request<Organization>(`/orgs/${orgId}/filiais`, { method: "POST", body: JSON.stringify({ name: data.name, account_type: "agency" }) }),
+  groupSummary: (orgId: string) =>
+    request<{ group_id: string; group_name: string; total_filiais: number; filiais: { org_id: string; name: string; total_content: number; posted_content: number; total_leads: number }[] }>(`/orgs/${orgId}/group-summary`),
 
   // Cost Centers
   listCostCenters: (orgId: string) =>
@@ -196,6 +220,9 @@ export const api = {
   getAvatarUrl: (influencerId: string) =>
     `${API_BASE}/influencers/${influencerId}/avatar`,
 
+  listVoices: () =>
+    request<{ voices: ElevenLabsVoice[] }>(`/influencers/voices`),
+
   // Video generation
   generateVideo: (contentId: string) =>
     request<{ status: string; video_url: string; filename: string }>(
@@ -239,6 +266,12 @@ export const api = {
     }),
 
   // Metrics
+  syncMetrics: (ccId: string) =>
+    request<{ synced: number; errors: number; total: number }>(
+      `/metrics/sync${qs({ cc_id: ccId })}`,
+      { method: "POST" }
+    ),
+
   getMetricsOverview: (ccId: string) =>
     request<MetricsOverview>(`/metrics/overview${qs({ cc_id: ccId })}`),
 
@@ -279,4 +312,121 @@ export const api = {
 
   markAllAsRead: (orgId: string) =>
     request(`/notifications/read-all${qs({ org_id: orgId })}`, { method: "POST" }),
+
+  // Webhooks
+  listWebhooks: (orgId: string) =>
+    request<Array<{ id: string; name: string; provider: string; url: string; events: string[]; is_active: boolean; created_at: string }>>(
+      `/webhooks${qs({ org_id: orgId })}`
+    ),
+
+  createWebhook: (orgId: string, body: { name: string; provider: string; url: string; events: string[] }) =>
+    request<{ id: string; name: string; provider: string; url: string; events: string[]; is_active: boolean; created_at: string }>(
+      `/webhooks${qs({ org_id: orgId })}`,
+      { method: "POST", body: JSON.stringify(body) }
+    ),
+
+  testWebhook: (id: string) =>
+    request<{ status: string; message: string }>(`/webhooks/${id}/test`, { method: "POST" }),
+
+  deleteWebhook: (id: string) =>
+    request(`/webhooks/${id}`, { method: "DELETE" }),
+
+  // Batch actions
+  batchAction: (ids: string[], action: string, notes?: string) =>
+    request<{ success: string[]; failed: Array<{ id: string; reason: string }> }>(
+      "/content-items/batch-action",
+      { method: "POST", body: JSON.stringify({ ids, action, notes }) }
+    ),
+
+  // Templates
+  listTemplates: (orgId: string, provider?: string) =>
+    request<ContentTemplate[]>(`/templates${qs({ org_id: orgId, provider })}`),
+
+  createTemplate: (orgId: string, body: ContentTemplateCreate) =>
+    request<ContentTemplate>(`/templates${qs({ org_id: orgId })}`, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+
+  updateTemplate: (id: string, body: ContentTemplateUpdate) =>
+    request<ContentTemplate>(`/templates/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+
+  deleteTemplate: (id: string) =>
+    request(`/templates/${id}`, { method: "DELETE" }),
+
+  // Auth extras
+  forgotPassword: (email: string) =>
+    request<{ detail: string }>("/auth/forgot-password", {
+      method: "POST",
+      body: JSON.stringify({ email }),
+    }),
+
+  resetPassword: (token: string, new_password: string) =>
+    request<{ detail: string }>("/auth/reset-password", {
+      method: "POST",
+      body: JSON.stringify({ token, new_password }),
+    }),
+
+  // Invites
+  getInvite: (token: string) =>
+    request<{ org_name: string; email: string; role: string; inviter_name: string; expired: boolean }>(
+      `/invite/${token}`
+    ),
+
+  checkUserExists: (email: string) =>
+    request<{ exists: boolean }>(`/auth/check-email${qs({ email })}`),
+
+  acceptInvite: (token: string, data: { name?: string; password?: string }) =>
+    request<TokenResponse>(`/invite/${token}/accept`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  inviteMember: (orgId: string, email: string, role: string) =>
+    request<{ detail: string }>(`/orgs/${orgId}/invite`, {
+      method: "POST",
+      body: JSON.stringify({ user_id: email, role }),
+    }),
+
+  // Admin
+  adminListOrgs: (skip = 0, limit = 100) =>
+    request<{ items: Array<{ id: string; name: string; account_type: string; plan: string; trial_ends_at: string | null; member_count: number; created_at: string }>; total: number }>(
+      `/admin/orgs${qs({ skip, limit })}`
+    ),
+
+  adminListUsers: (skip = 0, limit = 100) =>
+    request<{ items: Array<{ id: string; email: string; name: string; is_superadmin: boolean; created_at: string }>; total: number }>(
+      `/admin/users${qs({ skip, limit })}`
+    ),
+
+  adminActivatePlan: (orgId: string, plan: string) =>
+    request<{ detail: string }>(`/admin/orgs/${orgId}/activate`, {
+      method: "POST",
+      body: JSON.stringify({ plan }),
+    }),
+
+  // Billing (Asaas)
+  billingPlans: () =>
+    request<{ id: string; label: string; value_brl: number }[]>("/billing/plans"),
+
+  billingCheckout: (plan: string) =>
+    request<{ url: string; plan: string; org_id: string }>(`/billing/checkout?plan=${plan}`, {
+      method: "POST",
+    }),
+
+  getQuota: (orgId: string) =>
+    request<Record<string, { used: number; limit: number | null }>>(`/usage/quota${qs({ org_id: orgId })}`),
+
+  // Social Integrations
+  listSocialAccounts: (ccId: string) =>
+    request<SocialAccount[]>(`/integrations/accounts?cc_id=${ccId}`),
+
+  disconnectSocialAccount: (accountId: string) =>
+    request(`/integrations/accounts/${accountId}/disconnect`, { method: "POST" }),
+
+  deleteSocialAccount: (accountId: string) =>
+    request(`/integrations/accounts/${accountId}`, { method: "DELETE" }),
 };

@@ -25,7 +25,7 @@ import {
 
 // Mapa de labels para roles
 const ROLE_LABELS: Record<string, string> = {
-  owner: "Proprietario",
+  owner: "Proprietário",
   admin: "Administrador",
   editor: "Editor",
   viewer: "Visualizador",
@@ -114,11 +114,11 @@ export default function ConfiguracoesPage() {
       return false;
     }
     if (newPassword.length < 6) {
-      setPasswordError("A nova senha deve ter no minimo 6 caracteres");
+      setPasswordError("A nova senha deve ter no mínimo 6 caracteres");
       return false;
     }
     if (newPassword !== confirmPassword) {
-      setPasswordError("As senhas nao coincidem");
+      setPasswordError("As senhas não coincidem");
       return false;
     }
     setPasswordError("");
@@ -148,9 +148,9 @@ export default function ConfiguracoesPage() {
   return (
     <div className="space-y-6 max-w-2xl">
       <div>
-        <h1 className="text-2xl font-bold">Configuracoes</h1>
+        <h1 className="text-2xl font-bold">Configurações</h1>
         <p className="text-sm text-muted-foreground">
-          Gerencie seu perfil e preferencias
+          Gerencie seu perfil e preferências
         </p>
       </div>
 
@@ -161,7 +161,7 @@ export default function ConfiguracoesPage() {
             <User className="h-5 w-5 text-muted-foreground" />
             <CardTitle>Perfil</CardTitle>
           </div>
-          <CardDescription>Informacoes da sua conta</CardDescription>
+          <CardDescription>Informações da sua conta</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -184,13 +184,13 @@ export default function ConfiguracoesPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-muted-foreground">
-                Organizacao
+                Organização
               </label>
               <Input value={selectedOrg?.name || "--"} disabled readOnly />
             </div>
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-muted-foreground">
-                Papel
+                Função
               </label>
               <Input
                 value={
@@ -234,7 +234,7 @@ export default function ConfiguracoesPage() {
               </label>
               <Input
                 type="password"
-                placeholder="Minimo 6 caracteres"
+                placeholder="Mínimo 6 caracteres"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
               />
@@ -278,9 +278,9 @@ export default function ConfiguracoesPage() {
         <CardHeader>
           <div className="flex items-center gap-2">
             <Settings className="h-5 w-5 text-muted-foreground" />
-            <CardTitle>Preferencias</CardTitle>
+            <CardTitle>Preferências</CardTitle>
           </div>
-          <CardDescription>Personalize sua experiencia</CardDescription>
+          <CardDescription>Personalize sua experiência</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Tema */}
@@ -349,7 +349,7 @@ export default function ConfiguracoesPage() {
           {/* Notificacoes */}
           <div className="space-y-3">
             <div>
-              <p className="text-sm font-medium">Notificacoes</p>
+              <p className="text-sm font-medium">Notificações</p>
               <p className="text-sm text-muted-foreground">Em breve</p>
             </div>
             <div className="space-y-2">
@@ -390,13 +390,13 @@ export default function ConfiguracoesPage() {
         <CardHeader>
           <div className="flex items-center gap-2">
             <Info className="h-5 w-5 text-muted-foreground" />
-            <CardTitle>Informacoes do Sistema</CardTitle>
+            <CardTitle>Informações do Sistema</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
           <div className="space-y-3 text-sm">
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Versao</span>
+              <span className="text-muted-foreground">Versão</span>
               <span className="font-mono">v0.1.0-mvp</span>
             </div>
             <Separator />

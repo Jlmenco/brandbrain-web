@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useAuth } from "@/contexts/auth-context";
 
 export default function LoginPage() {
@@ -59,12 +60,14 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-2">
-              <label
-                htmlFor="password"
-                className="text-sm font-medium text-foreground"
-              >
-                Senha
-              </label>
+              <div className="flex justify-between items-center">
+                <label htmlFor="password" className="text-sm font-medium text-foreground">
+                  Senha
+                </label>
+                <Link href="/esqueci-senha" className="text-xs text-primary hover:underline">
+                  Esqueci minha senha
+                </Link>
+              </div>
               <input
                 id="password"
                 type="password"
@@ -88,6 +91,13 @@ export default function LoginPage() {
               {loading ? "Entrando..." : "Entrar"}
             </button>
           </form>
+
+          <p className="text-center text-sm text-muted-foreground mt-6">
+            Não tem conta?{" "}
+            <Link href="/cadastro" className="text-primary hover:underline font-medium">
+              Cadastre-se grátis
+            </Link>
+          </p>
         </div>
       </div>
     </div>

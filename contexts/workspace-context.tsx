@@ -9,7 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import { api } from "@/lib/api-client";
-import type { Organization, CostCenter, OrgRole } from "@/lib/types";
+import type { Organization, CostCenter, OrgRole, AccountType, PlanType } from "@/lib/types";
 import { hasPermission, type Permission } from "@/lib/permissions";
 
 interface WorkspaceContextValue {
@@ -19,9 +19,17 @@ interface WorkspaceContextValue {
   selectedCostCenter: CostCenter | null;
   selectOrg: (org: Organization) => void;
   selectCostCenter: (cc: CostCenter) => void;
+  refreshOrgs: () => Promise<void>;
   loading: boolean;
   currentRole: OrgRole | null;
   can: (permission: Permission) => boolean;
+  accountType: AccountType;
+  isSolo: boolean;
+  isAgency: boolean;
+  isGroup: boolean;
+  plan: PlanType;
+  isTrialExpired: boolean;
+  trialDaysRemaining: number | null;
 }
 
 const WorkspaceContext = createContext<WorkspaceContextValue | null>(null);
@@ -62,6 +70,12 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       .catch(() => {});
   }, [selectedOrg]);
 
+  const refreshOrgs = useCallback(async () => {
+    const data = await api.listOrgs();
+    setOrgs(data);
+    setSelectedOrg((prev) => data.find((o) => o.id === prev?.id) ?? prev);
+  }, []);
+
   const selectOrg = useCallback((org: Organization) => {
     setSelectedOrg(org);
     setSelectedCostCenter(null);
@@ -73,6 +87,17 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const currentRole: OrgRole | null = selectedOrg?.role ?? null;
+  const accountType: AccountType = selectedOrg?.account_type ?? "agency";
+  const isSolo = accountType === "solo";
+  const isAgency = accountType === "agency";
+  const isGroup = accountType === "group";
+  const plan: PlanType = selectedOrg?.plan ?? "active";
+  const trialDaysRemaining: number | null = (() => {
+    if (!selectedOrg?.trial_ends_at) return null;
+    const diff = new Date(selectedOrg.trial_ends_at).getTime() - Date.now();
+    return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+  })();
+  const isTrialExpired = plan === "trial" && trialDaysRemaining !== null && trialDaysRemaining <= 0;
 
   const can = useCallback(
     (permission: Permission) => hasPermission(currentRole, permission),
@@ -88,9 +113,17 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
         selectedCostCenter,
         selectOrg,
         selectCostCenter,
+        refreshOrgs,
         loading,
         currentRole,
         can,
+        accountType,
+        isSolo,
+        isAgency,
+        isGroup,
+        plan,
+        isTrialExpired,
+        trialDaysRemaining,
       }}
     >
       {children}

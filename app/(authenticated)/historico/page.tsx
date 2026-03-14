@@ -75,7 +75,7 @@ export default function HistoricoPage() {
   if (!selectedOrg) {
     return (
       <p className="text-muted-foreground">
-        Selecione uma organizacao no menu superior.
+        Selecione uma organização no menu superior.
       </p>
     );
   }
@@ -87,19 +87,19 @@ export default function HistoricoPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Historico</h1>
+        <h1 className="text-2xl font-bold">Histórico</h1>
         <p className="text-sm text-muted-foreground">
-          {total} acoes registradas
+          {total} ação{total !== 1 ? "ões" : ""} registrada{total !== 1 ? "s" : ""}
         </p>
       </div>
 
       <div className="flex items-center gap-3">
         <Select value={action} onValueChange={setAction}>
           <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="Acao" />
+            <SelectValue placeholder="Ação" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todas as acoes</SelectItem>
+            <SelectItem value="all">Todas as ações</SelectItem>
             {Object.entries(ACTION_LABELS).map(([key, label]) => (
               <SelectItem key={key} value={key}>
                 {label}
@@ -118,8 +118,8 @@ export default function HistoricoPage() {
       ) : items.length === 0 ? (
         <EmptyState
           icon="📋"
-          title="Nenhuma acao encontrada"
-          description="As acoes realizadas serao registradas aqui."
+          title="Nenhuma ação encontrada"
+          description="As ações realizadas serão registradas aqui."
         />
       ) : (
         <div className="overflow-x-auto">
@@ -127,7 +127,7 @@ export default function HistoricoPage() {
           <TableHeader>
             <TableRow>
               <TableHead className="w-[180px]">Data/Hora</TableHead>
-              <TableHead>Acao</TableHead>
+              <TableHead>Ação</TableHead>
               <TableHead>Tipo</TableHead>
               <TableHead>Detalhes</TableHead>
             </TableRow>
@@ -181,7 +181,7 @@ export default function HistoricoPage() {
       {total > PAGE_SIZE && (
         <div className="flex items-center justify-between pt-2">
           <p className="text-sm text-muted-foreground">
-            Mostrando {showFrom}-{showTo} de {total} acoes
+            Mostrando {showFrom}–{showTo} de {total} ações
           </p>
           <div className="flex gap-2">
             <Button
@@ -198,7 +198,7 @@ export default function HistoricoPage() {
               onClick={() => setPage((p) => p + 1)}
               disabled={page >= totalPages - 1}
             >
-              Proximo
+              Próximo
             </Button>
           </div>
         </div>

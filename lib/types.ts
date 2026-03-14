@@ -14,15 +14,23 @@ export interface User {
   email: string;
   name: string;
   is_active: boolean;
+  is_superadmin: boolean;
 }
 
 // Organization
 export type OrgRole = "owner" | "admin" | "editor" | "viewer";
+export type AccountType = "solo" | "agency" | "group";
+export type PlanType = "trial" | "solo_monthly" | "agency_monthly" | "group_monthly" | "active";
 
 export interface Organization {
   id: string;
   name: string;
   role: OrgRole | null;
+  billing_alert_threshold: number | null;
+  account_type: AccountType;
+  parent_org_id: string | null;
+  plan: PlanType;
+  trial_ends_at: string | null; // ISO datetime string
 }
 
 // Cost Center
@@ -64,6 +72,8 @@ export interface ContentItem {
   retry_count: number;
   next_retry_at: string | null;
   last_error: string | null;
+  video_job_status: "pending" | "processing" | "done" | "failed" | null;
+  video_job_error: string | null;
 }
 
 export interface PaginatedContent {
@@ -105,7 +115,55 @@ export interface Influencer {
   allowed_words: string[];
   cta_style: string;
   language: string;
+  voice_id: string | null;
   is_active: boolean;
+}
+
+export interface ElevenLabsVoice {
+  voice_id: string;
+  name: string;
+  labels: Record<string, string>;
+}
+
+// Content Templates
+export interface ContentTemplate {
+  id: string;
+  org_id: string;
+  name: string;
+  description: string;
+  provider_target: string;
+  text_template: string;
+  tags: string[];
+  is_active: boolean;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ContentTemplateCreate {
+  name: string;
+  description?: string;
+  provider_target?: string;
+  text_template: string;
+  tags?: string[];
+}
+
+export interface ContentTemplateUpdate {
+  name?: string;
+  description?: string;
+  provider_target?: string;
+  text_template?: string;
+  tags?: string[];
+  is_active?: boolean;
+}
+
+export interface SocialAccount {
+  id: string;
+  org_id: string;
+  cost_center_id: string;
+  provider: string;
+  account_name: string;
+  status: string;
 }
 
 export interface InfluencerCreate {
@@ -117,6 +175,7 @@ export interface InfluencerCreate {
   language: string;
   cta_style?: string;
   cost_center_id?: string;
+  voice_id?: string | null;
 }
 
 export interface BrandKit {

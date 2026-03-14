@@ -2,7 +2,7 @@ import type { ContentStatus } from "./types";
 
 export const STATUS_LABELS: Record<ContentStatus, string> = {
   draft: "Rascunho",
-  review: "Em Revisao",
+  review: "Em Revisão",
   approved: "Aprovado",
   scheduled: "Agendado",
   publishing: "Publicando",
@@ -33,26 +33,26 @@ export const PROVIDER_LABELS: Record<string, string> = {
 export const ACTION_LABELS: Record<string, string> = {
   create: "Criou",
   update: "Editou",
-  submit_review: "Enviou para revisao",
+  submit_review: "Enviou para revisão",
   approve: "Aprovou",
-  request_changes: "Solicitou alteracoes",
+  request_changes: "Solicitou alterações",
   reject: "Rejeitou",
   schedule: "Agendou",
   publish_now: "Publicou",
 };
 
 export const TARGET_TYPE_LABELS: Record<string, string> = {
-  content_item: "Conteudo",
+  content_item: "Conteúdo",
   influencer: "Influenciador",
-  brand_kit: "Brand Kit",
+  brand_kit: "Identidade de Marca",
   campaign: "Campanha",
   lead: "Lead",
 };
 
 export const OBJECTIVE_LABELS: Record<string, string> = {
-  leads: "Leads",
-  awareness: "Reconhecimento",
-  traffic: "Trafego",
+  leads: "Captação de Leads",
+  awareness: "Reconhecimento de Marca",
+  traffic: "Tráfego",
 };
 
 export const LEAD_STATUS_LABELS: Record<string, string> = {
@@ -70,15 +70,17 @@ export const LEAD_STATUS_COLORS: Record<string, string> = {
 };
 
 export const LEAD_SOURCE_LABELS: Record<string, string> = {
-  form: "Formulario",
+  form: "Formulário",
   whatsapp: "WhatsApp",
-  dm: "DM",
+  dm: "Mensagem Direta",
   manual: "Manual",
 };
 
 export const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", icon: "LayoutDashboard" as const },
-  { href: "/conteudos", label: "Conteudos", icon: "FileText" as const },
+  { href: "/conteudos", label: "Conteúdos", icon: "FileText" as const },
+  { href: "/templates", label: "Templates", icon: "LayoutTemplate" as const },
+  { href: "/calendario", label: "Calendário", icon: "CalendarDays" as const },
   {
     href: "/influenciadores",
     label: "Influenciadores",
@@ -86,5 +88,7 @@ export const NAV_ITEMS = [
   },
   { href: "/campanhas", label: "Campanhas", icon: "Megaphone" as const },
   { href: "/leads", label: "Leads", icon: "UserPlus" as const },
-  { href: "/historico", label: "Historico", icon: "ClipboardList" as const },
+  { href: "/historico", label: "Histórico", icon: "ClipboardList" as const },
+  { href: "/billing", label: "Faturamento", icon: "DollarSign" as const },
+  { href: "/integracoes", label: "Integrações", icon: "Share2" as const },
 ];

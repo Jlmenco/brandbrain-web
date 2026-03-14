@@ -109,7 +109,7 @@ export default function LeadsPage() {
         <EmptyState
           icon="🎯"
           title="Nenhum lead encontrado"
-          description="Seus leads aparecerao aqui conforme forem capturados."
+          description="Seus leads aparecerão aqui conforme forem capturados."
         />
       ) : (
         <div className="border rounded-lg overflow-x-auto">

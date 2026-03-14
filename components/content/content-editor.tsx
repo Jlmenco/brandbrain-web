@@ -31,13 +31,13 @@ export function ContentEditor({ item, onUpdate }: Props) {
 
   return (
     <div className="space-y-3">
-      <label className="text-sm font-medium">Texto do Conteudo</label>
+      <label className="text-sm font-medium">Texto do Conteúdo</label>
       <textarea
         value={text}
         onChange={(e) => setText(e.target.value)}
         disabled={!isEditable}
         className="w-full min-h-[200px] p-3 border rounded-md text-sm resize-y bg-background disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-ring"
-        placeholder="Texto do conteudo..."
+        placeholder="Texto do conteúdo..."
       />
       {isEditable && (
         <Button
@@ -45,7 +45,7 @@ export function ContentEditor({ item, onUpdate }: Props) {
           disabled={saving || text === item.text}
           size="sm"
         >
-          {saving ? "Salvando..." : "Salvar Alteracoes"}
+          {saving ? "Salvando..." : "Salvar Alterações"}
         </Button>
       )}
     </div>

@@ -43,10 +43,10 @@ export function EditContentDialog({ open, onClose, onUpdated, item }: Props) {
       });
       onUpdated();
       onClose();
-      toast.success("Conteudo atualizado com sucesso");
+      toast.success("Conteúdo atualizado com sucesso");
     } catch (err) {
       const msg =
-        err instanceof ApiError ? err.message : "Erro ao atualizar conteudo";
+        err instanceof ApiError ? err.message : "Erro ao atualizar conteúdo";
       setError(msg);
       toast.error(msg);
     } finally {
@@ -63,7 +63,7 @@ export function EditContentDialog({ open, onClose, onUpdated, item }: Props) {
     >
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Editar Conteudo</DialogTitle>
+          <DialogTitle>Editar Conteúdo</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">

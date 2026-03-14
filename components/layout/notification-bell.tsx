@@ -87,7 +87,7 @@ export function NotificationBell() {
       </PopoverTrigger>
       <PopoverContent align="end" className="w-80 p-0">
         <div className="flex items-center justify-between px-4 py-3 border-b">
-          <span className="text-sm font-semibold">Notificacoes</span>
+          <span className="text-sm font-semibold">Notificações</span>
           {unread > 0 && (
             <button
               onClick={handleMarkAll}

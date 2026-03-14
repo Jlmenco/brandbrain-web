@@ -168,7 +168,7 @@ function YouTubePreview({ text, influencerName, avatarUrl }: Omit<PostPreviewPro
         <div className="space-y-1 min-w-0">
           <p className="font-semibold text-sm line-clamp-2">{title}</p>
           <p className="text-xs text-muted-foreground">{influencerName}</p>
-          <p className="text-xs text-muted-foreground">0 visualizacoes - agora</p>
+          <p className="text-xs text-muted-foreground">0 visualizações - agora</p>
         </div>
       </div>
     </div>

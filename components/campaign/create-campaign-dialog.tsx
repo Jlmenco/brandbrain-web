@@ -101,13 +101,13 @@ export function CreateCampaignDialog({
             >
               <option value="leads">Leads</option>
               <option value="awareness">Reconhecimento</option>
-              <option value="traffic">Trafego</option>
+              <option value="traffic">Tráfego</option>
             </select>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Data Inicio</label>
+              <label className="text-sm font-medium">Data de Início</label>
               <input
                 type="date"
                 value={startDate}

@@ -72,7 +72,7 @@ export default function CampanhasPage() {
           <option value="">Todos os objetivos</option>
           <option value="leads">Leads</option>
           <option value="awareness">Reconhecimento</option>
-          <option value="traffic">Trafego</option>
+          <option value="traffic">Tráfego</option>
         </select>
         <Button
           variant="outline"
@@ -84,7 +84,7 @@ export default function CampanhasPage() {
               [
                 { key: "name", label: "Nome" },
                 { key: "objective", label: "Objetivo" },
-                { key: "start_date", label: "Inicio" },
+                { key: "start_date", label: "Início" },
                 { key: "end_date", label: "Fim" },
               ]
             )
@@ -106,7 +106,7 @@ export default function CampanhasPage() {
         <EmptyState
           icon="📢"
           title="Nenhuma campanha encontrada"
-          description="Crie sua primeira campanha para organizar seus conteudos."
+          description="Crie sua primeira campanha para organizar seus conteúdos."
         />
       ) : (
         <div className="border rounded-lg overflow-x-auto">

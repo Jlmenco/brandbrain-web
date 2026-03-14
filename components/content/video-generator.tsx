@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Video, Loader2, RefreshCw } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Video, Loader2, RefreshCw, CheckCircle, XCircle } from "lucide-react";
 import { api } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,33 +13,100 @@ interface VideoGeneratorProps {
   onGenerated?: () => void;
 }
 
+const JOB_POLL_INTERVAL = 5000; // 5 segundos
+
 export function VideoGenerator({ item, onGenerated }: VideoGeneratorProps) {
-  const [loading, setLoading] = useState(false);
+  const [jobStatus, setJobStatus] = useState<ContentItem["video_job_status"]>(
+    item.video_job_status
+  );
+  const [queuing, setQueuing] = useState(false);
   const [videoUrl, setVideoUrl] = useState<string | null>(() => {
     const refs = (item.media_refs || []) as Array<{ type: string }>;
     const videoRef = refs.find((m) => m.type === "video");
     return videoRef ? api.getVideoUrl(item.id) : null;
   });
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Iniciar polling se job estiver em andamento
+  useEffect(() => {
+    if (jobStatus === "pending" || jobStatus === "processing") {
+      pollRef.current = setInterval(async () => {
+        try {
+          const updated = await api.getContentItem(item.id);
+          setJobStatus(updated.video_job_status);
+          if (updated.video_job_status === "done") {
+            const refs = (updated.media_refs || []) as Array<{ type: string }>;
+            const videoRef = refs.find((m) => m.type === "video");
+            if (videoRef) setVideoUrl(api.getVideoUrl(item.id) + "?t=" + Date.now());
+            toast.success("Video gerado com sucesso!");
+            onGenerated?.();
+            clearInterval(pollRef.current!);
+          } else if (updated.video_job_status === "failed") {
+            toast.error(`Falha: ${updated.video_job_error || "erro desconhecido"}`);
+            clearInterval(pollRef.current!);
+          }
+        } catch {
+          // silencioso — continua tentando
+        }
+      }, JOB_POLL_INTERVAL);
+    }
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jobStatus]);
 
   const handleGenerate = async () => {
-    setLoading(true);
+    setQueuing(true);
     try {
       await api.generateVideo(item.id);
-      setVideoUrl(api.getVideoUrl(item.id) + "?t=" + Date.now());
-      toast.success("Video gerado com sucesso!");
-      onGenerated?.();
+      setJobStatus("pending");
+      toast.info("Video enfileirado! Processando em segundo plano...");
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Erro ao gerar video";
+      const msg = err instanceof Error ? err.message : "Erro ao enfileirar video";
       toast.error(msg);
     } finally {
-      setLoading(false);
+      setQueuing(false);
     }
+  };
+
+  const isProcessing = jobStatus === "pending" || jobStatus === "processing";
+
+  const statusBadge = () => {
+    if (jobStatus === "pending") return (
+      <div className="flex items-center gap-1.5 text-xs text-amber-600">
+        <Loader2 className="h-3 w-3 animate-spin" />
+        Aguardando na fila...
+      </div>
+    );
+    if (jobStatus === "processing") return (
+      <div className="flex items-center gap-1.5 text-xs text-blue-600">
+        <Loader2 className="h-3 w-3 animate-spin" />
+        Gerando video (ElevenLabs + Hedra)...
+      </div>
+    );
+    if (jobStatus === "done") return (
+      <div className="flex items-center gap-1.5 text-xs text-emerald-600">
+        <CheckCircle className="h-3 w-3" />
+        Video gerado com sucesso
+      </div>
+    );
+    if (jobStatus === "failed") return (
+      <div className="flex items-center gap-1.5 text-xs text-destructive">
+        <XCircle className="h-3 w-3" />
+        Falha na geracao
+      </div>
+    );
+    return null;
   };
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="text-base">Video do Influenciador</CardTitle>
+      <CardHeader className="pb-3">
+        <CardTitle className="text-base flex items-center justify-between">
+          <span>Video do Influenciador</span>
+          {statusBadge()}
+        </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {videoUrl ? (
@@ -56,25 +123,30 @@ export function VideoGenerator({ item, onGenerated }: VideoGeneratorProps) {
           <div className="rounded-lg border-2 border-dashed border-muted-foreground/25 p-8 text-center">
             <Video className="h-10 w-10 mx-auto text-muted-foreground/50 mb-3" />
             <p className="text-sm text-muted-foreground">
-              Gere um video do influenciador falando o texto deste conteudo
+              Gere um video do influenciador falando o texto deste conteúdo
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Usa IA para criar voz realista + lip sync com o avatar
+              Pipeline: Voz (ElevenLabs) + Lip sync (Hedra) — processado em segundo plano
             </p>
           </div>
         )}
 
         <Button
           onClick={handleGenerate}
-          disabled={loading}
+          disabled={queuing || isProcessing}
           size="sm"
           variant={videoUrl ? "outline" : "default"}
           className="w-full"
         >
-          {loading ? (
+          {queuing ? (
             <>
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              Gerando video... (pode levar 1-2 min)
+              Enfileirando...
+            </>
+          ) : isProcessing ? (
+            <>
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              Processando em segundo plano...
             </>
           ) : videoUrl ? (
             <>
@@ -91,7 +163,7 @@ export function VideoGenerator({ item, onGenerated }: VideoGeneratorProps) {
 
         {!item.influencer_id && (
           <p className="text-xs text-destructive text-center">
-            Este conteudo nao tem influenciador associado. Associe um influenciador primeiro.
+            Este conteúdo não tem influenciador associado.
           </p>
         )}
       </CardContent>

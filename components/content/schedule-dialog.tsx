@@ -28,7 +28,7 @@ export function ScheduleDialog({ open, onClose, onSchedule }: Props) {
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Agendar Publicacao</DialogTitle>
+          <DialogTitle>Agendar Publicação</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">

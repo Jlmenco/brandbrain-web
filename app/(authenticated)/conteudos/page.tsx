@@ -7,6 +7,7 @@ import type { ContentItem, Influencer } from "@/lib/types";
 import { ContentFilters } from "@/components/content/content-filters";
 import { ContentTable } from "@/components/content/content-table";
 import { CreateContentDialog } from "@/components/content/create-content-dialog";
+import { BatchActionsBar } from "@/components/content/batch-actions-bar";
 import { Button } from "@/components/ui/button";
 import { Gate } from "@/components/ui/gate";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -30,6 +31,7 @@ export default function ConteudosPage() {
   const [loading, setLoading] = useState(false);
   const [showCreate, setShowCreate] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   useEffect(() => {
     if (!selectedOrg) return;
@@ -93,7 +95,7 @@ export default function ConteudosPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Conteudos</h1>
+          <h1 className="text-2xl font-bold">Conteúdos</h1>
           <p className="text-sm text-muted-foreground">
             {selectedCostCenter.name} — {total} itens
           </p>
@@ -119,7 +121,7 @@ export default function ConteudosPage() {
             Exportar CSV
           </Button>
           <Gate permission="content:create">
-            <Button onClick={() => setShowCreate(true)}>Novo Conteudo</Button>
+            <Button onClick={() => setShowCreate(true)}>Novo Conteúdo</Button>
           </Gate>
         </div>
       </div>
@@ -133,6 +135,12 @@ export default function ConteudosPage() {
           influencers={influencers}
         />
       </Gate>
+
+      <BatchActionsBar
+        selectedIds={selectedIds}
+        onClear={() => setSelectedIds([])}
+        onDone={() => { setSelectedIds([]); setRefreshKey((k) => k + 1); }}
+      />
 
       <ContentFilters
         status={status}
@@ -157,7 +165,12 @@ export default function ConteudosPage() {
           ))}
         </div>
       ) : (
-        <ContentTable items={items} influencers={influencers} />
+        <ContentTable
+          items={items}
+          influencers={influencers}
+          selectedIds={selectedIds}
+          onSelectionChange={setSelectedIds}
+        />
       )}
 
       {total > PAGE_SIZE && (
@@ -180,7 +193,7 @@ export default function ConteudosPage() {
               onClick={() => setPage((p) => p + 1)}
               disabled={page >= totalPages - 1}
             >
-              Proximo
+              Próximo
             </Button>
           </div>
         </div>

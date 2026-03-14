@@ -126,9 +126,9 @@ export function CreateLeadDialog({
                 className={inputClass}
               >
                 <option value="manual">Manual</option>
-                <option value="form">Formulario</option>
+                <option value="form">Formulário</option>
                 <option value="whatsapp">WhatsApp</option>
-                <option value="dm">DM</option>
+                <option value="dm">Mensagem Direta</option>
               </select>
             </div>
             <div className="space-y-2">

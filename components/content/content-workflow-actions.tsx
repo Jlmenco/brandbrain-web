@@ -18,7 +18,7 @@ interface Props {
 }
 
 export function ContentWorkflowActions({ item, onStatusChange }: Props) {
-  const { can } = useWorkspace();
+  const { can, isSolo } = useWorkspace();
   const [loading, setLoading] = useState(false);
   const [showSchedule, setShowSchedule] = useState(false);
   const [showConfirmReject, setShowConfirmReject] = useState(false);
@@ -34,7 +34,7 @@ export function ContentWorkflowActions({ item, onStatusChange }: Props) {
       onStatusChange();
       if (successMsg) toast.success(successMsg);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Erro na operacao";
+      const msg = err instanceof Error ? err.message : "Erro na operação";
       setError(msg);
       toast.error(msg);
     } finally {
@@ -46,26 +46,35 @@ export function ContentWorkflowActions({ item, onStatusChange }: Props) {
     <div className="space-y-3">
       {error && <p className="text-sm text-destructive">{error}</p>}
 
-      {item.status === "draft" && can("content:submit_review") && (
+      {item.status === "draft" && isSolo && can("content:approve") && (
         <Button
-          onClick={() => doAction(() => api.submitReview(item.id), "Enviado para revisao")}
+          onClick={() => doAction(() => api.approve(item.id), "Conteúdo aprovado")}
           disabled={loading}
         >
-          {loading ? "Enviando..." : "Enviar para Revisao"}
+          {loading ? "Aprovando..." : "Aprovar"}
+        </Button>
+      )}
+
+      {item.status === "draft" && !isSolo && can("content:submit_review") && (
+        <Button
+          onClick={() => doAction(() => api.submitReview(item.id), "Enviado para revisão")}
+          disabled={loading}
+        >
+          {loading ? "Enviando..." : "Enviar para Revisão"}
         </Button>
       )}
 
       {item.status === "review" && can("content:approve") && (
         <div className="space-y-3">
           <Input
-            placeholder="Observacoes (opcional)..."
+            placeholder="Observações (opcional)..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
           />
           <div className="flex gap-2 flex-wrap">
             <Button
               onClick={() =>
-                doAction(() => api.approve(item.id, notes || undefined), "Conteudo aprovado")
+                doAction(() => api.approve(item.id, notes || undefined), "Conteúdo aprovado")
               }
               disabled={loading}
             >
@@ -75,12 +84,12 @@ export function ContentWorkflowActions({ item, onStatusChange }: Props) {
               variant="outline"
               onClick={() =>
                 doAction(() =>
-                  api.requestChanges(item.id, notes || undefined), "Alteracoes solicitadas"
+                  api.requestChanges(item.id, notes || undefined), "Alterações solicitadas"
                 )
               }
               disabled={loading}
             >
-              Solicitar Alteracoes
+              Solicitar Alterações
             </Button>
             <Button
               variant="destructive"
@@ -129,7 +138,7 @@ export function ContentWorkflowActions({ item, onStatusChange }: Props) {
         <div className="flex items-center gap-2">
           <div className="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
           <p className="text-sm text-purple-600">Publicando... aguarde.</p>
-          <span className="text-xs text-muted-foreground">(modo simulacao)</span>
+          <span className="text-xs text-muted-foreground">(modo simulação)</span>
         </div>
       )}
 
@@ -140,7 +149,7 @@ export function ContentWorkflowActions({ item, onStatusChange }: Props) {
               Publicado com sucesso!
             </p>
             <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
-              Simulacao
+              Simulação
             </span>
           </div>
           {item.posted_at && (
@@ -155,7 +164,7 @@ export function ContentWorkflowActions({ item, onStatusChange }: Props) {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
             >
-              Ver publicacao <ExternalLink className="h-3 w-3" />
+              Ver publicação <ExternalLink className="h-3 w-3" />
             </a>
           )}
         </div>
@@ -164,7 +173,7 @@ export function ContentWorkflowActions({ item, onStatusChange }: Props) {
       {item.status === "failed" && (
         <div className="space-y-1">
           <p className="text-sm text-red-600">
-            Erro: {item.last_error || "Falha na publicacao"}
+            Erro: {item.last_error || "Falha na publicação"}
           </p>
           <p className="text-xs text-muted-foreground">
             Tentativas: {item.retry_count}
@@ -173,14 +182,14 @@ export function ContentWorkflowActions({ item, onStatusChange }: Props) {
       )}
 
       {item.status === "rejected" && (
-        <p className="text-sm text-red-600">Este conteudo foi rejeitado.</p>
+        <p className="text-sm text-red-600">Este conteúdo foi rejeitado.</p>
       )}
 
       <ScheduleDialog
         open={showSchedule}
         onClose={() => setShowSchedule(false)}
         onSchedule={(dt) =>
-          doAction(() => api.schedule(item.id, dt), "Conteudo agendado")
+          doAction(() => api.schedule(item.id, dt), "Conteúdo agendado")
         }
       />
 
@@ -189,10 +198,10 @@ export function ContentWorkflowActions({ item, onStatusChange }: Props) {
         onClose={() => setShowConfirmReject(false)}
         onConfirm={() => {
           setShowConfirmReject(false);
-          doAction(() => api.reject(item.id, notes || undefined), "Conteudo rejeitado");
+          doAction(() => api.reject(item.id, notes || undefined), "Conteúdo rejeitado");
         }}
-        title="Rejeitar Conteudo"
-        description="Tem certeza que deseja rejeitar este conteudo?"
+        title="Rejeitar Conteúdo"
+        description="Tem certeza de que deseja rejeitar este conteúdo?"
         confirmLabel="Rejeitar"
         variant="destructive"
         loading={loading}
@@ -203,10 +212,10 @@ export function ContentWorkflowActions({ item, onStatusChange }: Props) {
         onClose={() => setShowConfirmPublish(false)}
         onConfirm={() => {
           setShowConfirmPublish(false);
-          doAction(() => api.publishNow(item.id), "Publicacao iniciada");
+          doAction(() => api.publishNow(item.id), "Publicação iniciada");
         }}
-        title="Publicar Conteudo"
-        description="Publicar este conteudo imediatamente?"
+        title="Publicar Conteúdo"
+        description="Publicar este conteúdo imediatamente?"
         confirmLabel="Publicar Agora"
         variant="default"
         loading={loading}

@@ -55,9 +55,9 @@ export function CreateContentDialog({
       reset();
       onCreated();
       onClose();
-      toast.success("Conteudo criado com sucesso");
+      toast.success("Conteúdo criado com sucesso");
     } catch (err) {
-      const msg = err instanceof ApiError ? err.message : "Erro ao criar conteudo";
+      const msg = err instanceof ApiError ? err.message : "Erro ao criar conteúdo";
       setError(msg);
       toast.error(msg);
     } finally {
@@ -77,7 +77,7 @@ export function CreateContentDialog({
     >
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Novo Conteudo</DialogTitle>
+          <DialogTitle>Novo Conteúdo</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">
@@ -118,7 +118,7 @@ export function CreateContentDialog({
               onChange={(e) => setText(e.target.value)}
               rows={5}
               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring resize-none"
-              placeholder="Escreva o conteudo aqui..."
+              placeholder="Escreva o conteúdo aqui..."
             />
           </div>
 

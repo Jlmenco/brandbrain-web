@@ -78,7 +78,7 @@ export default function ConteudoDetailPage() {
           <ArrowLeft className="h-5 w-5" />
         </Link>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold">Detalhe do Conteudo</h1>
+          <h1 className="text-2xl font-bold">Detalhe do Conteúdo</h1>
           <p className="text-sm text-muted-foreground">
             {PROVIDER_LABELS[item.provider_target] || item.provider_target}
           </p>
@@ -122,7 +122,7 @@ export default function ConteudoDetailPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Acoes</CardTitle>
+              <CardTitle className="text-base">Ações</CardTitle>
             </CardHeader>
             <CardContent>
               <ContentWorkflowActions
@@ -148,7 +148,7 @@ export default function ConteudoDetailPage() {
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Informacoes</CardTitle>
+              <CardTitle className="text-base">Informações</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <InfoRow label="ID" value={item.id.slice(0, 8) + "..."} />
@@ -161,7 +161,7 @@ export default function ConteudoDetailPage() {
                 }
               />
               <Separator />
-              <InfoRow label="Versao" value={`v${item.version}`} />
+              <InfoRow label="Versão" value={`v${item.version}`} />
               <Separator />
               <InfoRow
                 label="Agendado"

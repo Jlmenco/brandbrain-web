@@ -104,7 +104,7 @@ export function AvatarGenerator({ influencerId, influencerName }: AvatarGenerato
 
         {!avatarUrl && checked && (
           <p className="text-xs text-muted-foreground text-center">
-            Gere um avatar fotorrealista baseado nas configuracoes do influenciador
+            Gere um avatar fotorrealista baseado nas configurações do influenciador
           </p>
         )}
       </CardContent>

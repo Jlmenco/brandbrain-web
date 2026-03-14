@@ -12,9 +12,10 @@ import { RecentContent } from "@/components/dashboard/recent-content";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OnboardingWizard } from "@/components/onboarding/onboarding-wizard";
+import { SoloDashboard } from "@/components/dashboard/solo-dashboard";
 
 export default function DashboardPage() {
-  const { selectedOrg, selectedCostCenter, loading } = useWorkspace();
+  const { selectedOrg, selectedCostCenter, loading, isSolo } = useWorkspace();
 
   // Onboarding: show wizard if user hasn't completed it
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -69,15 +70,19 @@ export default function DashboardPage() {
     );
   }
 
+  if (isSolo) {
+    return <SoloDashboard />;
+  }
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Dashboard</h1>
         <p className="text-sm text-muted-foreground">
-          Visao geral — {selectedCostCenter.name}
+          Visão geral — {selectedCostCenter.name}
         </p>
         <p className="text-xs text-muted-foreground mt-1">
-          Ultimos 30 dias (dados simulados)
+          Últimos 30 dias (dados simulados)
         </p>
       </div>
 
@@ -87,7 +92,7 @@ export default function DashboardPage() {
       {/* Grafico diario */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Metricas Diarias</CardTitle>
+          <CardTitle className="text-base">Métricas Diárias</CardTitle>
         </CardHeader>
         <CardContent>
           <MetricsChart ccId={selectedCostCenter.id} />
@@ -98,7 +103,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Status dos Conteudos</CardTitle>
+            <CardTitle className="text-base">Status dos Conteúdos</CardTitle>
           </CardHeader>
           <CardContent>
             <ContentStatusSummary ccId={selectedCostCenter.id} />
@@ -142,7 +147,7 @@ export default function DashboardPage() {
       {/* Conteudos recentes */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Conteudos Recentes</CardTitle>
+          <CardTitle className="text-base">Conteúdos Recentes</CardTitle>
         </CardHeader>
         <CardContent>
           <RecentContent ccId={selectedCostCenter.id} />

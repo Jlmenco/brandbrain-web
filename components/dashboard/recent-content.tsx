@@ -30,7 +30,7 @@ export function RecentContent({ ccId }: { ccId: string }) {
   if (items.length === 0) {
     return (
       <p className="text-sm text-muted-foreground">
-        Nenhum conteudo encontrado.
+        Nenhum conteúdo encontrado.
       </p>
     );
   }
@@ -42,7 +42,7 @@ export function RecentContent({ ccId }: { ccId: string }) {
           <TableHead>Texto</TableHead>
           <TableHead>Canal</TableHead>
           <TableHead>Status</TableHead>
-          <TableHead>Versao</TableHead>
+          <TableHead>Versão</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

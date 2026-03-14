@@ -120,8 +120,8 @@ export function CreateInfluencerDialog({
                 onChange={(e) => setLanguage(e.target.value)}
                 className={inputClass}
               >
-                <option value="pt-BR">Portugues (BR)</option>
-                <option value="en">Ingles</option>
+                <option value="pt-BR">Português (BR)</option>
+                <option value="en">Inglês</option>
               </select>
             </div>
           </div>
@@ -148,7 +148,7 @@ export function CreateInfluencerDialog({
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Nivel de Emoji</label>
+              <label className="text-sm font-medium">Nível de Emoji</label>
               <select
                 value={emojiLevel}
                 onChange={(e) => setEmojiLevel(e.target.value)}
@@ -156,7 +156,7 @@ export function CreateInfluencerDialog({
               >
                 <option value="none">Nenhum</option>
                 <option value="low">Baixo</option>
-                <option value="medium">Medio</option>
+                <option value="medium">Médio</option>
                 <option value="high">Alto</option>
               </select>
             </div>

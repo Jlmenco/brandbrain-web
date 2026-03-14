@@ -41,7 +41,7 @@ export default function InfluenciadoresPage() {
   if (!selectedOrg) {
     return (
       <p className="text-muted-foreground">
-        Selecione uma organizacao.
+        Selecione uma organização.
       </p>
     );
   }
@@ -73,7 +73,7 @@ export default function InfluenciadoresPage() {
         <EmptyState
           icon="👤"
           title="Nenhum influenciador"
-          description="Crie seu primeiro influenciador para comecar a gerar conteudo."
+          description="Crie seu primeiro influenciador para começar a gerar conteúdo."
           action={
             <Gate permission="influencer:create">
               <Button onClick={() => setShowCreate(true)}>Novo Influenciador</Button>

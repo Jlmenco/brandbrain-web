@@ -6,10 +6,14 @@ import { useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   FileText,
+  LayoutTemplate,
+  CalendarDays,
   Users,
   Megaphone,
   UserPlus,
   ClipboardList,
+  DollarSign,
+  Share2,
   Search,
   type LucideIcon,
 } from "lucide-react";
@@ -20,10 +24,14 @@ import { cn } from "@/lib/utils";
 const ICON_MAP: Record<string, LucideIcon> = {
   LayoutDashboard,
   FileText,
+  LayoutTemplate,
+  CalendarDays,
   Users,
   Megaphone,
   UserPlus,
   ClipboardList,
+  DollarSign,
+  Share2,
 };
 
 export function CommandPalette() {

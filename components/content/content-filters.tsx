@@ -60,7 +60,7 @@ export function ContentFilters({
       <div className="relative">
         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder="Buscar conteudo..."
+          placeholder="Buscar conteúdo..."
           defaultValue={search}
           onChange={(e) => handleSearch(e.target.value)}
           className="pl-9 w-[220px]"

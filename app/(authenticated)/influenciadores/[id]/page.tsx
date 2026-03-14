@@ -13,6 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import { BrandKitView } from "@/components/influencer/brand-kit-view";
 import { EditBrandKitDialog } from "@/components/influencer/edit-brand-kit-dialog";
 import { AvatarGenerator } from "@/components/influencer/avatar-generator";
+import { VoiceSelector } from "@/components/influencer/voice-selector";
 import { Gate } from "@/components/ui/gate";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -89,6 +90,16 @@ export default function InfluencerDetailPage() {
           />
         </Gate>
 
+        <Gate permission="brandkit:edit">
+          <VoiceSelector
+            influencerId={influencer.id}
+            currentVoiceId={influencer.voice_id}
+            onSaved={(voiceId) =>
+              setInfluencer((prev) => prev ? { ...prev, voice_id: voiceId } : prev)
+            }
+          />
+        </Gate>
+
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle className="text-base">Perfil</CardTitle>
@@ -96,7 +107,7 @@ export default function InfluencerDetailPage() {
           <CardContent className="space-y-3">
             <InfoRow label="Tom de Voz" value={influencer.tone} />
             <Separator />
-            <InfoRow label="Nivel de Emoji" value={influencer.emoji_level} />
+            <InfoRow label="Nível de Emoji" value={influencer.emoji_level} />
             <Separator />
             <InfoRow label="CTA" value={influencer.cta_style || "--"} />
             <Separator />
@@ -112,7 +123,7 @@ export default function InfluencerDetailPage() {
                 <Separator />
                 <div>
                   <p className="text-xs text-muted-foreground mb-1">
-                    Topicos Proibidos
+                    Tópicos Proibidos
                   </p>
                   <div className="flex flex-wrap gap-1">
                     {influencer.forbidden_topics.map((t) => (
