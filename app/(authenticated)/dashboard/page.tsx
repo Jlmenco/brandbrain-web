@@ -17,17 +17,26 @@ import { SoloDashboard } from "@/components/dashboard/solo-dashboard";
 export default function DashboardPage() {
   const { selectedOrg, selectedCostCenter, loading, isSolo } = useWorkspace();
 
-  // Onboarding: show wizard if user hasn't completed it
+  // Onboarding: show wizard only if user hasn't completed it AND org has no cost center yet
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [onboardingChecked, setOnboardingChecked] = useState(false);
 
   useEffect(() => {
+    if (loading) return;
     if (typeof window !== "undefined") {
       const done = localStorage.getItem("bb_onboarding_done");
-      setShowOnboarding(!done);
+      // Skip onboarding if already marked done OR if org already has a cost center (existing user)
+      if (done || selectedCostCenter) {
+        if (!done && selectedCostCenter) {
+          localStorage.setItem("bb_onboarding_done", "1");
+        }
+        setShowOnboarding(false);
+      } else {
+        setShowOnboarding(true);
+      }
       setOnboardingChecked(true);
     }
-  }, []);
+  }, [loading, selectedCostCenter]);
 
   if (!onboardingChecked) {
     return null;
