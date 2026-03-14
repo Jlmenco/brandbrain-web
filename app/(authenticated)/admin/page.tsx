@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ShieldCheck, Building2, Users, Clock, CheckCircle2, ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/auth-context";
@@ -223,9 +223,21 @@ function ActivatePlanDropdown({
   onActivate: (orgId: string, plan: string) => void;
 }) {
   const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function handleClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [open]);
 
   return (
-    <div className="relative inline-block">
+    <div className="relative inline-block" ref={ref}>
       <Button
         size="sm"
         variant="outline"
@@ -237,7 +249,7 @@ function ActivatePlanDropdown({
         <ChevronDown className="h-3 w-3" />
       </Button>
       {open && (
-        <div className="absolute right-0 z-50 mt-1 w-40 rounded-md border bg-popover shadow-md">
+        <div className="absolute right-0 z-[9999] mt-1 w-40 rounded-md border bg-popover shadow-md">
           {VALID_PLANS.map((plan) => (
             <button
               key={plan}
