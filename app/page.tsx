@@ -197,8 +197,13 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t py-8 px-4 text-center text-sm text-muted-foreground">
+      <footer className="border-t py-8 px-4 text-center text-sm text-muted-foreground space-y-2">
         <p>&copy; 2026 Brand Brain — contato@brandbrain.com.br</p>
+        <p>
+          <Link href="/privacidade" className="hover:text-foreground transition-colors underline underline-offset-4">
+            Política de Privacidade
+          </Link>
+        </p>
       </footer>
     </div>
   );
