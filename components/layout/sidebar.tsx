@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FileText, LayoutTemplate, CalendarDays, Users, Megaphone, UserPlus, ClipboardList, DollarSign, Share2, Settings, Building2, ShieldCheck } from "lucide-react";
+import { LayoutDashboard, FileText, LayoutTemplate, CalendarDays, Users, Megaphone, UserPlus, ClipboardList, DollarSign, Share2, Settings, Building2, ShieldCheck, BarChart3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useWorkspace } from "@/contexts/workspace-context";
 import { useAuth } from "@/contexts/auth-context";
@@ -11,6 +11,7 @@ const SOLO_NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/conteudos", label: "Conteúdos", icon: FileText },
   { href: "/minha-marca", label: "Minha Marca", icon: Users },
+  { href: "/reports", label: "Relatórios", icon: BarChart3 },
   { href: "/billing", label: "Faturamento", icon: DollarSign },
   { href: "/configuracoes", label: "Configurações", icon: Settings },
 ];
@@ -24,6 +25,7 @@ const AGENCY_NAV_ITEMS = [
   { href: "/campanhas", label: "Campanhas", icon: Megaphone },
   { href: "/leads", label: "Leads", icon: UserPlus },
   { href: "/historico", label: "Histórico", icon: ClipboardList },
+  { href: "/reports", label: "Relatórios", icon: BarChart3 },
   { href: "/billing", label: "Faturamento", icon: DollarSign },
   { href: "/integracoes", label: "Integrações", icon: Share2 },
   { href: "/configuracoes", label: "Configurações", icon: Settings },
@@ -39,6 +41,7 @@ const GROUP_NAV_ITEMS = [
   { href: "/campanhas", label: "Campanhas", icon: Megaphone },
   { href: "/leads", label: "Leads", icon: UserPlus },
   { href: "/historico", label: "Histórico", icon: ClipboardList },
+  { href: "/reports", label: "Relatórios", icon: BarChart3 },
   { href: "/billing", label: "Faturamento", icon: DollarSign },
   { href: "/integracoes", label: "Integrações", icon: Share2 },
   { href: "/configuracoes", label: "Configurações", icon: Settings },

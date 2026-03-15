@@ -429,4 +429,173 @@ export const api = {
 
   deleteSocialAccount: (accountId: string) =>
     request(`/integrations/accounts/${accountId}`, { method: "DELETE" }),
+
+  // Drip Campaigns
+  listDripCampaigns: (orgId: string) =>
+    request<DripCampaign[]>(`/drip-campaigns${qs({ org_id: orgId })}`),
+
+  createDripCampaign: (data: { name: string; trigger_event: string; org_id?: string; steps: DripStepInput[] }) =>
+    request<DripCampaign>("/drip-campaigns", { method: "POST", body: JSON.stringify(data) }),
+
+  updateDripCampaign: (id: string, data: { name?: string; trigger_event?: string; is_active?: boolean; steps?: DripStepInput[] }) =>
+    request<DripCampaign>(`/drip-campaigns/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
+
+  deactivateDripCampaign: (id: string) =>
+    request(`/drip-campaigns/${id}`, { method: "DELETE" }),
+
+  listDripEnrollments: (campaignId: string, status?: string) =>
+    request<DripEnrollment[]>(`/drip-campaigns/${campaignId}/enrollments${qs({ status })}`),
+
+  cancelDripEnrollment: (campaignId: string, enrollmentId: string) =>
+    request(`/drip-campaigns/${campaignId}/enrollments/${enrollmentId}/cancel`, { method: "POST" }),
+
+  // Onboarding
+  getOnboardingProgress: (orgId: string) =>
+    request<OnboardingProgress>(`/onboarding/progress${qs({ org_id: orgId })}`),
+
+  completeOnboardingStep: (orgId: string, step: string) =>
+    request<OnboardingProgress>("/onboarding/progress/complete-step", {
+      method: "POST",
+      body: JSON.stringify({ org_id: orgId, step }),
+    }),
+
+  dismissOnboarding: (orgId: string) =>
+    request<OnboardingProgress>("/onboarding/progress/dismiss", {
+      method: "POST",
+      body: JSON.stringify({ org_id: orgId }),
+    }),
+
+  // Repurpose
+  repurposeContent: (contentId: string, targetPlatforms: string[]) =>
+    request<{ created: Array<{ id: string; platform: string; preview: string }>; source_id: string }>(
+      `/content-items/${contentId}/repurpose`,
+      { method: "POST", body: JSON.stringify({ target_platforms: targetPlatforms }) },
+    ),
+
+  // Reports
+  previewReport: (params: { date_from: string; date_to: string; cc_id?: string; org_id?: string; report_type?: string }) =>
+    request<string>(`/reports/preview${qs(params)}`),
+
+  generateReportUrl: (params: { date_from: string; date_to: string; cc_id?: string; org_id?: string; report_type?: string }) => {
+    const base = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
+    const query = new URLSearchParams(params as Record<string, string>).toString();
+    return `${base}/reports/generate?${query}`;
+  },
+
+  // Editorial Planning
+  listEditorialPlans: (orgId: string, ccId?: string, status?: string) =>
+    request<EditorialPlanResponse[]>(`/editorial/plans${qs({ org_id: orgId, cc_id: ccId, status })}`),
+
+  getEditorialPlan: (planId: string) =>
+    request<EditorialPlanResponse>(`/editorial/plans/${planId}`),
+
+  generateEditorialPlan: (data: GenerateEditorialPlanRequest) =>
+    request<EditorialPlanResponse>("/editorial/generate", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  updateEditorialPlanStatus: (planId: string, status: string) =>
+    request<{ id: string; status: string }>(`/editorial/plans/${planId}/status${qs({ status })}`, { method: "PATCH" }),
+
+  updateEditorialSlot: (slotId: string, data: EditorialSlotUpdate) =>
+    request<EditorialSlotResponse>(`/editorial/slots/${slotId}`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    }),
+
+  generateContentFromSlot: (slotId: string) =>
+    request<{ content_item_id: string; slot_id: string; text: string; platform: string; status: string }>(
+      `/editorial/slots/${slotId}/generate-content`,
+      { method: "POST" },
+    ),
+
+  deleteEditorialPlan: (planId: string) =>
+    request<{ deleted: boolean }>(`/editorial/plans/${planId}`, { method: "DELETE" }),
 };
+
+// Drip Campaign Types
+interface DripStepInput {
+  step_order: number;
+  delay_hours: number;
+  subject: string;
+  body_template: string;
+}
+
+interface DripStep extends DripStepInput {
+  id: string;
+}
+
+interface DripCampaign {
+  id: string;
+  org_id: string | null;
+  name: string;
+  trigger_event: string;
+  is_active: boolean;
+  created_at: string;
+  steps: DripStep[];
+}
+
+interface DripEnrollment {
+  id: string;
+  campaign_id: string;
+  user_id: string;
+  org_id: string | null;
+  current_step: number;
+  status: string;
+  enrolled_at: string;
+  next_send_at: string | null;
+  completed_at: string | null;
+}
+
+// Editorial Planning Types
+interface EditorialSlotResponse {
+  id: string;
+  plan_id: string;
+  date: string;
+  time_slot: string;
+  platform: string;
+  pillar: string;
+  theme: string;
+  objective: string;
+  content_item_id: string | null;
+}
+
+interface EditorialPlanResponse {
+  id: string;
+  org_id: string;
+  cost_center_id: string | null;
+  period_type: string;
+  period_start: string;
+  period_end: string;
+  status: string;
+  ai_rationale: string | null;
+  slots: EditorialSlotResponse[];
+}
+
+interface GenerateEditorialPlanRequest {
+  org_id: string;
+  cc_id: string;
+  period_type?: string;
+  platforms?: string[];
+  objectives?: string[];
+}
+
+interface EditorialSlotUpdate {
+  time_slot?: string;
+  platform?: string;
+  pillar?: string;
+  theme?: string;
+  objective?: string;
+}
+
+// Onboarding Types
+interface OnboardingProgress {
+  id: string;
+  user_id: string;
+  org_id: string;
+  steps_completed: string[];
+  steps_total: string[];
+  is_dismissed: boolean;
+  is_complete: boolean;
+}

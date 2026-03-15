@@ -8,6 +8,7 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { CommandPalette } from "@/components/ui/command-palette";
 import { TrialBanner } from "@/components/layout/trial-banner";
 import { TrialExpiredModal } from "@/components/organization/trial-expired-modal";
+import { OnboardingChecklist } from "@/components/onboarding/onboarding-checklist";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -64,6 +65,7 @@ export default function AuthenticatedLayout({
         <div className="flex-1 flex flex-col min-w-0">
           <Header onMenuClick={() => setMobileOpen(true)} />
           <TrialBanner />
+          <OnboardingChecklist />
           <CommandPalette />
           <main className="flex-1 p-4 lg:p-6">{children}</main>
         </div>

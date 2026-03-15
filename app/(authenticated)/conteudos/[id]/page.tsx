@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Pencil } from "lucide-react";
+import { ArrowLeft, Pencil, Repeat2 } from "lucide-react";
 import { api } from "@/lib/api-client";
 import type { ContentItem } from "@/lib/types";
 import { STATUS_LABELS, STATUS_COLORS, PROVIDER_LABELS } from "@/lib/constants";
@@ -19,6 +19,7 @@ import { EditContentDialog } from "@/components/content/edit-content-dialog";
 import { Button } from "@/components/ui/button";
 import { Gate } from "@/components/ui/gate";
 import { VideoGenerator } from "@/components/content/video-generator";
+import { RepurposeDialog } from "@/components/content/repurpose-dialog";
 import type { Influencer } from "@/lib/types";
 
 export default function ConteudoDetailPage() {
@@ -28,6 +29,7 @@ export default function ConteudoDetailPage() {
   const [influencer, setInfluencer] = useState<Influencer | null>(null);
   const [error, setError] = useState("");
   const [showEdit, setShowEdit] = useState(false);
+  const [showRepurpose, setShowRepurpose] = useState(false);
 
   const fetchItem = useCallback(() => {
     api
@@ -95,6 +97,16 @@ export default function ConteudoDetailPage() {
             </Button>
           </Gate>
         )}
+        <Gate permission="content:edit_draft">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowRepurpose(true)}
+          >
+            <Repeat2 className="h-4 w-4 mr-1" />
+            Adaptar
+          </Button>
+        </Gate>
         <Badge
           variant="outline"
           className={`text-sm ${STATUS_COLORS[item.status] || ""}`}
@@ -111,6 +123,14 @@ export default function ConteudoDetailPage() {
           item={item}
         />
       )}
+
+      <RepurposeDialog
+        open={showRepurpose}
+        onClose={() => setShowRepurpose(false)}
+        contentId={item.id}
+        currentPlatform={item.provider_target}
+        onSuccess={() => fetchItem()}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
