@@ -20,14 +20,24 @@ interface Props {
   existing: BrandKit | null;
 }
 
-function safeStringify(value: Record<string, unknown>): string {
-  if (!value || Object.keys(value).length === 0) return "";
-  return JSON.stringify(value, null, 2);
+type Pair = { key: string; value: string };
+
+function toPairs(value: Record<string, unknown> | null | undefined): Pair[] {
+  if (!value) return [];
+  return Object.entries(value).map(([k, v]) => ({
+    key: k,
+    value: typeof v === "string" ? v : JSON.stringify(v),
+  }));
 }
 
-function safeParse(value: string): Record<string, unknown> {
-  if (!value.trim()) return {};
-  return JSON.parse(value);
+function fromPairs(pairs: Pair[]): Record<string, unknown> {
+  const result: Record<string, unknown> = {};
+  for (const { key, value } of pairs) {
+    const k = key.trim();
+    if (!k) continue;
+    result[k] = value;
+  }
+  return result;
 }
 
 export function EditBrandKitDialog({
@@ -38,29 +48,29 @@ export function EditBrandKitDialog({
   existing,
 }: Props) {
   const [description, setDescription] = useState("");
-  const [valueProps, setValueProps] = useState("");
-  const [products, setProducts] = useState("");
-  const [audience, setAudience] = useState("");
-  const [styleGuidelines, setStyleGuidelines] = useState("");
-  const [links, setLinks] = useState("");
+  const [valueProps, setValueProps] = useState<Pair[]>([]);
+  const [products, setProducts] = useState<Pair[]>([]);
+  const [audience, setAudience] = useState<Pair[]>([]);
+  const [styleGuidelines, setStyleGuidelines] = useState<Pair[]>([]);
+  const [links, setLinks] = useState<Pair[]>([]);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (existing) {
       setDescription(existing.description || "");
-      setValueProps(safeStringify(existing.value_props));
-      setProducts(safeStringify(existing.products));
-      setAudience(safeStringify(existing.audience));
-      setStyleGuidelines(safeStringify(existing.style_guidelines));
-      setLinks(safeStringify(existing.links));
+      setValueProps(toPairs(existing.value_props));
+      setProducts(toPairs(existing.products));
+      setAudience(toPairs(existing.audience));
+      setStyleGuidelines(toPairs(existing.style_guidelines));
+      setLinks(toPairs(existing.links));
     } else {
       setDescription("");
-      setValueProps("");
-      setProducts("");
-      setAudience("");
-      setStyleGuidelines("");
-      setLinks("");
+      setValueProps([]);
+      setProducts([]);
+      setAudience([]);
+      setStyleGuidelines([]);
+      setLinks([]);
     }
     setError("");
   }, [existing, open]);
@@ -71,24 +81,19 @@ export function EditBrandKitDialog({
     try {
       const kit = await api.upsertBrandKit(influencerId, {
         description: description.trim(),
-        value_props: safeParse(valueProps),
-        products: safeParse(products),
-        audience: safeParse(audience),
-        style_guidelines: safeParse(styleGuidelines),
-        links: safeParse(links),
+        value_props: fromPairs(valueProps),
+        products: fromPairs(products),
+        audience: fromPairs(audience),
+        style_guidelines: fromPairs(styleGuidelines),
+        links: fromPairs(links),
       });
       onUpdated(kit);
       onClose();
       toast.success("Brand Kit salvo com sucesso");
     } catch (err) {
-      if (err instanceof SyntaxError) {
-        setError("JSON invalido em um dos campos");
-        toast.error("JSON invalido em um dos campos");
-      } else {
-        const msg = err instanceof ApiError ? err.message : "Erro ao salvar brand kit";
-        setError(msg);
-        toast.error(msg);
-      }
+      const msg = err instanceof ApiError ? err.message : "Erro ao salvar brand kit";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setSaving(false);
     }
@@ -96,7 +101,6 @@ export function EditBrandKitDialog({
 
   const inputClass =
     "w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring";
-  const textareaClass = `${inputClass} resize-none font-mono text-xs`;
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
@@ -118,35 +122,50 @@ export function EditBrandKitDialog({
             />
           </div>
 
-          <JsonField
+          <KeyValueListField
             label="Proposta de Valor"
+            help="Ex: diferencial → cálculo estrutural especializado"
+            keyPlaceholder="diferencial"
+            valuePlaceholder="cálculo estrutural especializado"
             value={valueProps}
             onChange={setValueProps}
-            className={textareaClass}
+            inputClass={inputClass}
           />
-          <JsonField
+          <KeyValueListField
             label="Produtos"
+            help="Ex: laudo_estrutural → análise técnica completa"
+            keyPlaceholder="nome do produto"
+            valuePlaceholder="descrição"
             value={products}
             onChange={setProducts}
-            className={textareaClass}
+            inputClass={inputClass}
           />
-          <JsonField
+          <KeyValueListField
             label="Publico-alvo"
+            help="Ex: setor → construtoras de médio porte"
+            keyPlaceholder="característica"
+            valuePlaceholder="valor"
             value={audience}
             onChange={setAudience}
-            className={textareaClass}
+            inputClass={inputClass}
           />
-          <JsonField
+          <KeyValueListField
             label="Diretrizes de Estilo"
+            help="Ex: tom → técnico e direto; palavras_proibidas → barato, simples"
+            keyPlaceholder="diretriz"
+            valuePlaceholder="valor"
             value={styleGuidelines}
             onChange={setStyleGuidelines}
-            className={textareaClass}
+            inputClass={inputClass}
           />
-          <JsonField
+          <KeyValueListField
             label="Links"
+            help="Ex: site → https://exemplo.com.br"
+            keyPlaceholder="rótulo"
+            valuePlaceholder="https://..."
             value={links}
             onChange={setLinks}
-            className={textareaClass}
+            inputClass={inputClass}
           />
 
           {error && <p className="text-sm text-destructive">{error}</p>}
@@ -165,27 +184,69 @@ export function EditBrandKitDialog({
   );
 }
 
-function JsonField({
+function KeyValueListField({
   label,
+  help,
+  keyPlaceholder,
+  valuePlaceholder,
   value,
   onChange,
-  className,
+  inputClass,
 }: {
   label: string;
-  value: string;
-  onChange: (v: string) => void;
-  className: string;
+  help: string;
+  keyPlaceholder: string;
+  valuePlaceholder: string;
+  value: Pair[];
+  onChange: (v: Pair[]) => void;
+  inputClass: string;
 }) {
+  function update(i: number, patch: Partial<Pair>) {
+    onChange(value.map((p, idx) => (idx === i ? { ...p, ...patch } : p)));
+  }
+  function remove(i: number) {
+    onChange(value.filter((_, idx) => idx !== i));
+  }
+  function add() {
+    onChange([...value, { key: "", value: "" }]);
+  }
+
   return (
     <div className="space-y-2">
       <label className="text-sm font-medium">{label}</label>
-      <textarea
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        rows={3}
-        className={className}
-        placeholder='{"chave": "valor"}'
-      />
+      <p className="text-xs text-muted-foreground">{help}</p>
+      <div className="space-y-2">
+        {value.map((pair, i) => (
+          <div key={i} className="flex gap-2">
+            <input
+              type="text"
+              value={pair.key}
+              onChange={(e) => update(i, { key: e.target.value })}
+              placeholder={keyPlaceholder}
+              className={`${inputClass} flex-1`}
+            />
+            <input
+              type="text"
+              value={pair.value}
+              onChange={(e) => update(i, { value: e.target.value })}
+              placeholder={valuePlaceholder}
+              className={`${inputClass} flex-[2]`}
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => remove(i)}
+              aria-label={`Remover ${label}`}
+            >
+              ×
+            </Button>
+          </div>
+        ))}
+      </div>
+      <Button type="button" variant="outline" size="sm" onClick={add}>
+        + Adicionar
+      </Button>
     </div>
   );
 }
