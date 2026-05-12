@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BrandKitView } from "@/components/influencer/brand-kit-view";
 import { EditBrandKitDialog } from "@/components/influencer/edit-brand-kit-dialog";
+import { CreateBrandKitWizard } from "@/components/influencer/create-brand-kit-wizard";
 import { AvatarGenerator } from "@/components/influencer/avatar-generator";
 import { VoiceSelector } from "@/components/influencer/voice-selector";
 
@@ -20,6 +21,7 @@ export default function MinhaMarcaPage() {
   const [brandKit, setBrandKit] = useState<BrandKit | null>(null);
   const [loading, setLoading] = useState(true);
   const [showBrandKitDialog, setShowBrandKitDialog] = useState(false);
+  const [showBrandKitWizard, setShowBrandKitWizard] = useState(false);
 
   useEffect(() => {
     if (!selectedOrg) return;
@@ -123,13 +125,21 @@ export default function MinhaMarcaPage() {
               <p className="text-sm text-muted-foreground">
                 Nenhuma identidade de marca configurada ainda.
               </p>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowBrandKitDialog(true)}
-              >
-                Configurar Identidade da Marca
-              </Button>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  size="sm"
+                  onClick={() => setShowBrandKitWizard(true)}
+                >
+                  Criar com IA (recomendado)
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowBrandKitDialog(true)}
+                >
+                  Edição manual
+                </Button>
+              </div>
             </CardContent>
           </Card>
         )}
@@ -139,6 +149,13 @@ export default function MinhaMarcaPage() {
           onClose={() => setShowBrandKitDialog(false)}
           onUpdated={(kit) => setBrandKit(kit)}
           influencerId={influencer.id}
+          existing={brandKit}
+        />
+        <CreateBrandKitWizard
+          open={showBrandKitWizard}
+          onClose={() => setShowBrandKitWizard(false)}
+          onSaved={(kit) => setBrandKit(kit)}
+          influencer={influencer}
           existing={brandKit}
         />
       </div>

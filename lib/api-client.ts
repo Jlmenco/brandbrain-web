@@ -211,6 +211,19 @@ export const api = {
       body: JSON.stringify(body),
     }),
 
+  suggestBrandKitField: (
+    influencerId: string,
+    field: "description" | "value_props" | "products" | "audience" | "style_guidelines",
+    userHint?: string
+  ) =>
+    request<{ field: string; suggestion: string | Record<string, string> }>(
+      `/influencers/${influencerId}/brand-kit/suggest`,
+      {
+        method: "POST",
+        body: JSON.stringify({ field, user_hint: userHint ?? "" }),
+      }
+    ),
+
   generateAvatar: (influencerId: string) =>
     request<{ url: string; filename: string; revised_prompt: string }>(
       `/influencers/${influencerId}/generate-avatar`,

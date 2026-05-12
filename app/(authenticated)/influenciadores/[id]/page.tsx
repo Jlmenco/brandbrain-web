@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { BrandKitView } from "@/components/influencer/brand-kit-view";
 import { EditBrandKitDialog } from "@/components/influencer/edit-brand-kit-dialog";
+import { CreateBrandKitWizard } from "@/components/influencer/create-brand-kit-wizard";
 import { AvatarGenerator } from "@/components/influencer/avatar-generator";
 import { VoiceSelector } from "@/components/influencer/voice-selector";
 import { Gate } from "@/components/ui/gate";
@@ -24,6 +25,7 @@ export default function InfluencerDetailPage() {
   const [brandKit, setBrandKit] = useState<BrandKit | null>(null);
   const [error, setError] = useState("");
   const [showBrandKitDialog, setShowBrandKitDialog] = useState(false);
+  const [showBrandKitWizard, setShowBrandKitWizard] = useState(false);
 
   useEffect(() => {
     api
@@ -208,13 +210,21 @@ export default function InfluencerDetailPage() {
                 Nenhum Brand Kit configurado.
               </p>
               <Gate permission="brandkit:edit">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowBrandKitDialog(true)}
-                >
-                  Criar Brand Kit
-                </Button>
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    size="sm"
+                    onClick={() => setShowBrandKitWizard(true)}
+                  >
+                    Criar com IA (recomendado)
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowBrandKitDialog(true)}
+                  >
+                    Edição manual
+                  </Button>
+                </div>
               </Gate>
             </CardContent>
           </Card>
@@ -226,6 +236,13 @@ export default function InfluencerDetailPage() {
             onClose={() => setShowBrandKitDialog(false)}
             onUpdated={(kit) => setBrandKit(kit)}
             influencerId={id}
+            existing={brandKit}
+          />
+          <CreateBrandKitWizard
+            open={showBrandKitWizard}
+            onClose={() => setShowBrandKitWizard(false)}
+            onSaved={(kit) => setBrandKit(kit)}
+            influencer={influencer}
             existing={brandKit}
           />
         </Gate>
